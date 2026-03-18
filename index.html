@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LandrianiBlenkmann · Reclutamiento v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --verde:#1F6C43; --verde-dark:#155232; --verde-light:#2a8a56; --verde-xs:#e8f5ee;
+  --oro:#D4AF37; --oro-light:#e8c84a; --oro-dark:#b8960f; --oro-xs:#fdf8e1;
+  --bg:#f5f4ef; --bg2:#eeede7; --surface:#ffffff;
+  --text:#1a1a1a; --muted:#6b7280; --border:#e2e0d8;
+  --shadow:0 2px 16px rgba(31,108,67,.08); --shadow-lg:0 8px 40px rgba(31,108,67,.16);
+  --red:#ef4444; --blue:#3b82f6; --purple:#8b5cf6; --amber:#f59e0b;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px}
+
+/* ── HEADER ── */
+header{background:var(--verde-dark);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--oro),var(--oro-dark));border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:16px;color:white}
+.logo-text{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:white}
+.logo-text span{color:var(--oro)}
+.logo-sub{font-size:10px;color:rgba(255,255,255,.5);letter-spacing:.8px;text-transform:uppercase;margin-top:1px}
+.nav{display:flex;gap:2px;align-items:center}
+.nb{padding:6px 14px;border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.65);background:transparent}
+.nb:hover{color:white;background:rgba(255,255,255,.1)}
+.nb.active{background:rgba(255,255,255,.15);color:white;font-weight:600}
+.btn-nuevo{background:var(--oro)!important;color:var(--verde-dark)!important;font-weight:700!important;margin-left:8px}
+.btn-nuevo:hover{background:var(--oro-light)!important}
+.sync-indicator{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.5);margin-left:16px}
+.sync-dot{width:6px;height:6px;border-radius:50%;background:#4ade80}
+.sync-dot.syncing{background:var(--oro);animation:pulse 1s infinite}
+
+/* ── MAIN ── */
+.main{padding:24px 28px;max-width:1600px;margin:0 auto}
+.view{display:none}.view.active{display:block}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--surface);border-radius:10px;padding:16px 16px 14px;border:1px solid var(--border);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;cursor:default}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--verde),var(--oro))}
+.kpi-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+.kpi-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--verde-dark);line-height:1}
+.kpi-val.oro{color:var(--oro-dark)}
+.kpi-val.red{color:var(--red)}
+.kpi-val.blue{color:var(--blue)}
+.kpi-sub{font-size:11px;color:var(--muted);margin-top:5px}
+.kpi-delta{font-size:11px;font-weight:600;margin-top:4px}
+.kpi-delta.up{color:#16a34a}.kpi-delta.dn{color:var(--red)}
+
+/* ── FILTER BAR ── */
+.fbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.fsel,.finp{padding:7px 12px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface);color:var(--text);outline:none;transition:border-color .2s}
+.fsel:focus,.finp:focus{border-color:var(--verde)}
+.finp{min-width:200px}
+.fsel-sm{font-size:12px;padding:5px 10px}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .2s}
+.tag.active-tag{border-color:var(--verde);background:var(--verde-xs);color:var(--verde-dark)}
+
+/* ── SECTION HEADER ── */
+.sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.st{font-family:'Playfair Display',serif;font-size:19px;font-weight:600;color:var(--verde-dark)}
+
+/* ── BUTTONS ── */
+.btn{padding:7px 16px;border-radius:7px;border:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.btn-p{background:var(--verde);color:white}.btn-p:hover{background:var(--verde-light)}
+.btn-g{background:var(--oro);color:var(--verde-dark)}.btn-g:hover{background:var(--oro-light)}
+.btn-o{background:transparent;border:1px solid var(--border);color:var(--muted)}.btn-o:hover{border-color:var(--verde);color:var(--verde)}
+.btn-r{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}.btn-r:hover{background:#fecaca}
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:5px}
+.btn-xs{padding:3px 8px;font-size:11px;border-radius:4px}
+
+/* ── KANBAN ── */
+.kanban{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;overflow-x:auto;padding-bottom:8px}
+.kcol{background:var(--bg2);border-radius:10px;padding:10px;min-width:185px;border:1px solid var(--border)}
+.kcol-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.kcol-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.kcol-badge{font-size:11px;font-weight:700;background:white;border-radius:20px;padding:2px 8px;border:1px solid var(--border);color:var(--muted)}
+.kcards{display:flex;flex-direction:column;gap:7px;min-height:50px}
+.kcard{background:white;border-radius:7px;padding:10px;border:1px solid var(--border);cursor:pointer;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.kcard:hover{border-color:var(--verde);box-shadow:0 3px 12px rgba(31,108,67,.12);transform:translateY(-1px)}
+.kcard-name{font-weight:600;font-size:13px;color:var(--text);margin-bottom:4px}
+.kcard-meta{font-size:11px;color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.kcard-dias{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;margin-top:5px;display:inline-block}
+.dias-ok{background:#d1fae5;color:#065f46}
+.dias-warn{background:#fef3c7;color:#92400e}
+.dias-late{background:#fee2e2;color:#991b1b}
+
+/* col colors */
+.col-ac{border-top:3px solid #6366f1}.col-ac .kcol-title{color:#6366f1}
+.col-ep{border-top:3px solid var(--amber)}.col-ep .kcol-title{color:#92400e}
+.col-en{border-top:3px solid var(--blue)}.col-en .kcol-title{color:var(--blue)}
+.col-br{border-top:3px solid var(--oro)}.col-br .kcol-title{color:var(--oro-dark)}
+.col-pi{border-top:3px solid #10b981}.col-pi .kcol-title{color:#065f46}
+.col-in{border-top:3px solid var(--verde)}.col-in .kcol-title{color:var(--verde-dark)}
+
+/* fuente badges */
+.fb{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;margin-top:5px}
+.fb-meta{background:#fff3e0;color:#e65100}
+.fb-li{background:#e3f2fd;color:#1565c0}
+.fb-lb{background:#e8f5e9;color:#2e7d32}
+.fb-ref{background:#f3e5f5;color:#6a1b9a}
+.fb-esp{background:#fce4ec;color:#880e4f}
+
+/* ── TABLE ── */
+.tw{background:var(--surface);border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--verde-dark);color:white;padding:11px 13px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{background:var(--verde-light)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:hover{background:rgba(31,108,67,.03)}
+tbody tr:last-child{border-bottom:none}
+td{padding:9px 13px;font-size:13px;vertical-align:middle}
+.td-name{font-weight:600;color:var(--text)}
+.td-muted{color:var(--muted);font-size:12px}
+.td-dias{font-size:12px;font-weight:600;padding:2px 8px;border-radius:12px;display:inline-block}
+
+/* pills */
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.pill-ac{background:#ede9fe;color:#5b21b6}
+.pill-ep{background:#fef3c7;color:#92400e}
+.pill-en{background:#dbeafe;color:#1e40af}
+.pill-br{background:#fef9c3;color:#713f12}
+.pill-pi{background:#ccfbf1;color:#134e4a}
+.pill-in{background:#d1fae5;color:#065f46}
+.pill-re{background:#fee2e2;color:#991b1b}
+
+/* ── CHARTS ── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
+.charts-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:22px}
+.cc{background:var(--surface);border-radius:10px;padding:20px;border:1px solid var(--border);box-shadow:var(--shadow)}
+.cc-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--verde-dark);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.bar-chart{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:flex;align-items:center;gap:9px}
+.bar-lbl{font-size:11px;color:var(--text);min-width:140px;text-align:right;font-weight:500}
+.bar-track{flex:1;background:var(--bg2);border-radius:4px;height:20px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:7px;font-size:11px;font-weight:700;color:white;transition:width .9s cubic-bezier(.4,0,.2,1);min-width:2px}
+.bar-n{font-size:11px;color:var(--muted);min-width:36px}
+.funnel{display:flex;flex-direction:column;gap:5px;align-items:center}
+.fs{border-radius:6px;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;color:white;font-weight:600;font-size:12px;transition:transform .2s}
+.fs:hover{transform:scaleX(1.02)}
+.fs-pct{font-size:10px;opacity:.75;margin-left:10px}
+.fs-arrow{font-size:10px;opacity:.5;margin:1px auto}
+
+/* ── RANKING ENTREVISTAS ── */
+.ranking-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.rcard{background:var(--surface);border-radius:10px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;transition:transform .2s,box-shadow .2s}
+.rcard:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.rcard-header{padding:14px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between}
+.rcard-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--verde-dark)}
+.rcard-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.score-circle{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:white}
+.rcard-body{padding:12px 16px}
+.score-bar-wrap{margin-bottom:10px}
+.score-bars{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sb-row{display:flex;align-items:center;gap:6px;font-size:11px}
+.sb-lbl{min-width:90px;color:var(--muted)}
+.sb-dots{display:flex;gap:3px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--bg2)}
+.dot.filled{background:var(--verde)}
+.rcard-footer{padding:10px 16px;background:var(--bg);border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rf-item{font-size:11px}
+.rf-label{color:var(--muted);font-weight:600;text-transform:uppercase;font-size:10px;letter-spacing:.4px}
+.rf-val{color:var(--text);margin-top:2px}
+
+/* ── MODAL ── */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1000;align-items:center;justify-content:center}
+.mo.open{display:flex}
+.md{background:var(--surface);border-radius:14px;width:600px;max-width:95vw;max-height:92vh;overflow-y:auto;padding:26px;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:slideUp .22s ease}
+.md-sm{width:400px}
+.md-lg{width:720px}
+@keyframes slideUp{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+.md-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.md-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--verde-dark)}
+.md-sub{font-size:12px;color:var(--muted);margin-top:3px}
+.md-close{background:none;border:none;cursor:pointer;font-size:18px;color:var(--muted);padding:4px 8px;border-radius:5px;transition:background .15s}
+.md-close:hover{background:var(--bg2)}
+.md-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.mf label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:4px}
+.mf .v{font-size:13px;font-weight:500;color:var(--text);background:var(--bg);padding:7px 11px;border-radius:7px;border:1px solid var(--border)}
+.mf.full{grid-column:1/-1}
+.md-actions{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+
+/* ── FORM ── */
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+.fg input,.fg select,.fg textarea{padding:8px 11px;border:1px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--bg);color:var(--text);outline:none;transition:border-color .2s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--verde);background:white}
+.fg textarea{resize:vertical;min-height:64px}
+.fg.full{grid-column:1/-1}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-step{display:flex;gap:14px;position:relative}
+.tl-step::before{content:'';position:absolute;left:11px;top:22px;bottom:-8px;width:2px;background:var(--border)}
+.tl-step:last-child::before{display:none}
+.tl-dot{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);background:white;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;z-index:1}
+.tl-dot.done{background:var(--verde);border-color:var(--verde);color:white}
+.tl-dot.curr{background:var(--oro);border-color:var(--oro);color:white}
+.tl-content{padding-bottom:16px}
+.tl-title{font-size:13px;font-weight:600;color:var(--text)}
+.tl-date{font-size:11px;color:var(--muted);margin-top:1px}
+.tl-days{font-size:11px;font-weight:600;color:var(--verde-dark);margin-top:2px}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin-bottom:20px}
+.tab{padding:8px 18px;border:none;background:none;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--verde-dark);border-bottom-color:var(--verde-dark);font-weight:700}
+
+/* ── PAGINATION ── */
+.pag{display:flex;align-items:center;gap:5px;justify-content:center;padding:14px;background:var(--bg2);border-top:1px solid var(--border)}
+.pb{padding:4px 10px;border-radius:5px;border:1px solid var(--border);background:white;font-size:12px;cursor:pointer;transition:all .12s}
+.pb.active{background:var(--verde);color:white;border-color:var(--verde)}
+.pb:hover:not(.active){border-color:var(--verde);color:var(--verde)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--verde-dark);color:white;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:9999;display:none;border-left:4px solid var(--oro);animation:fadeInUp .3s ease}
+@keyframes fadeInUp{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── GOOGLE SHEETS PANEL ── */
+.sheets-panel{background:var(--verde-xs);border:1px solid #a7f3d0;border-radius:10px;padding:16px 20px;margin-bottom:22px;display:flex;align-items:center;gap:16px}
+.sheets-icon{font-size:28px;flex-shrink:0}
+.sheets-text{flex:1}
+.sheets-title{font-weight:700;font-size:14px;color:var(--verde-dark)}
+.sheets-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.sheets-input{flex:1;max-width:380px;padding:7px 11px;border:1px solid #a7f3d0;border-radius:7px;font-size:13px;outline:none;background:white}
+.sheets-input:focus{border-color:var(--verde)}
+
+/* ── EMPTY STATE ── */
+.empty{padding:36px;text-align:center;color:var(--muted);font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:8px}
+
+/* ── NOTA GOOGLE SHEETS SYNC ── */
+.sync-note{font-size:11px;background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:8px 12px;color:#664d03;margin-top:10px;display:flex;gap:6px;align-items:flex-start}
+
+@media(max-width:1200px){
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .kanban{grid-template-columns:repeat(3,1fr)}
+  .charts-grid,.charts-grid-3{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">LB</div>
+    <div>
+      <div class="logo-text">Landriani<span>Blenkmann</span></div>
+      <div class="logo-sub">Sistema de Reclutamiento</div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nb active" onclick="nav('dashboard',this)">📊 Dashboard</button>
+    <button class="nb" onclick="nav('kanban',this)">🗂 Pipeline</button>
+    <button class="nb" onclick="nav('candidatos',this)">👥 Candidatos</button>
+    <button class="nb" onclick="nav('entrevistas',this)">⭐ Entrevistas</button>
+    <button class="nb btn-nuevo" onclick="abrirNuevo()">+ Nuevo Candidato</button>
+  </div>
+  <div class="sync-indicator">
+    <div class="sync-dot" id="sync-dot"></div>
+    <span id="sync-txt">Datos locales</span>
+  </div>
+</header>
+
+<div class="main">
+
+<!-- ══ GOOGLE SHEETS PANEL ══ -->
+<div class="sheets-panel" id="sheets-panel">
+  <div class="sheets-icon">📋</div>
+  <div class="sheets-text">
+    <div class="sheets-title">Conectar con Google Sheets</div>
+    <div class="sheets-desc">Pegá la URL de tu planilla para sincronizar datos. Necesitás publicar la hoja BD_Candidatos como CSV.</div>
+    <div class="sync-note">💡 <span>Para sincronizar: en Google Sheets → Archivo → Compartir → Publicar en la Web → Hoja "BD_Candidatos" → formato CSV → Copiar URL aquí.</span></div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:6px">
+    <input class="sheets-input" id="sheets-url" placeholder="https://docs.google.com/spreadsheets/d/…/pub?output=csv">
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-p btn-sm" onclick="conectarSheets()">Conectar</button>
+      <button class="btn btn-o btn-sm" onclick="document.getElementById('sheets-panel').style.display='none'">Usar datos locales</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="view-dashboard" class="view active">
+  <div class="fbar" style="margin-bottom:16px">
+    <span style="font-size:12px;color:var(--muted);font-weight:600">Filtrar por:</span>
+    <select class="fsel" id="dash-cohorte" onchange="renderDash()">
+      <option value="">Todas las cohortes</option>
+    </select>
+    <select class="fsel" id="dash-fuente" onchange="renderDash()">
+      <option value="">Todas las fuentes</option>
+      <option>Meta ADS</option><option>Linkedin</option><option>Pagina LB</option>
+      <option>CV Referido</option><option>CV Espontaneo</option>
+    </select>
+  </div>
+
+  <div class="kpi-grid" id="kpi-grid"></div>
+
+  <div class="charts-grid">
+    <div class="cc"><div class="cc-title">Embudo de Conversión</div><div class="funnel" id="ch-funnel"></div></div>
+    <div class="cc"><div class="cc-title">Origen de Candidatos</div><div class="bar-chart" id="ch-fuentes"></div></div>
+    <div class="cc"><div class="cc-title">Motivos de Baja / Rechazo</div><div class="bar-chart" id="ch-motivos"></div></div>
+    <div class="cc"><div class="cc-title">Candidatos por Cohorte</div><div class="bar-chart" id="ch-cohortes"></div></div>
+  </div>
+
+  <div class="charts-grid-3">
+    <div class="cc">
+      <div class="cc-title">Tiempo Promedio de Gestión <span style="font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400">(días)</span></div>
+      <div id="ch-tiempos"></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Costo por Ingresante</div>
+      <div id="ch-costo"></div>
+    </div>
+    <div class="cc">
+      <div class="cc-title">Pendientes de Acción</div>
+      <div id="ch-pendientes"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KANBAN ══ -->
+<div id="view-kanban" class="view">
+  <div class="sh">
+    <div class="st">Pipeline de Reclutamiento</div>
+    <div class="fbar" style="margin:0">
+      <select class="fsel fsel-sm" id="k-cohorte" onchange="renderKanban()"><option value="">Todas las cohortes</option></select>
+      <select class="fsel fsel-sm" id="k-fuente" onchange="renderKanban()">
+        <option value="">Todas las fuentes</option>
+        <option>Meta ADS</option><option>Linkedin</option><option>Pagina LB</option>
+        <option>CV Referido</option><option>CV Espontaneo</option>
+      </select>
+    </div>
+  </div>
+  <div class="kanban" id="kanban-board"></div>
+</div>
+
+<!-- ══ CANDIDATOS ══ -->
+<div id="view-candidatos" class="view">
+  <div class="sh">
+    <div class="st">Base de Candidatos</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-o btn-sm" onclick="exportCSV()">⬇ Exportar CSV</button>
+      <button class="btn btn-p btn-sm" onclick="exportSheets()">📋 Ver instrucciones Sheets</button>
+    </div>
+  </div>
+  <div class="fbar">
+    <input class="finp" id="b-buscar" placeholder="🔍 Buscar nombre…" oninput="filtrar()">
+    <select class="fsel" id="b-estado" onchange="filtrar()">
+      <option value="">Todos los estados</option>
+      <option>A contactar</option><option>En proceso</option><option>Entrevistado</option>
+      <option>Aprobado para Broker</option><option>Próximo Ingreso</option>
+      <option>Ingresado</option><option>Rechazado/Baja</option>
+    </select>
+    <select class="fsel" id="b-fuente" onchange="filtrar()">
+      <option value="">Todas las fuentes</option>
+      <option>Meta ADS</option><option>Linkedin</option><option>Pagina LB</option>
+      <option>CV Referido</option><option>CV Espontaneo</option>
+    </select>
+    <select class="fsel" id="b-cohorte" onchange="filtrar()"><option value="">Todas las cohortes</option></select>
+  </div>
+  <div class="tw">
+    <table>
+      <thead>
+        <tr>
+          <th onclick="sortBy('nombre')">Nombre ↕</th>
+          <th onclick="sortBy('fuente')">Fuente ↕</th>
+          <th onclick="sortBy('cohorte')">Cohorte ↕</th>
+          <th onclick="sortBy('estado')">Estado ↕</th>
+          <th onclick="sortBy('fecha')">Postulación ↕</th>
+          <th>T. Reacción</th>
+          <th>T. Hiring</th>
+          <th onclick="sortBy('score')">Score ↕</th>
+          <th>Motivo Rechazo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body"></tbody>
+    </table>
+    <div class="pag" id="paginacion"></div>
+  </div>
+</div>
+
+<!-- ══ ENTREVISTAS ══ -->
+<div id="view-entrevistas" class="view">
+  <div class="sh">
+    <div class="st">Ranking de Entrevistas</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <select class="fsel fsel-sm" id="e-cohorte" onchange="renderEntrevistas()"><option value="">Todas las cohortes</option></select>
+      <button class="btn btn-g btn-sm" onclick="abrirNuevaEntrevista()">+ Cargar Entrevista</button>
+    </div>
+  </div>
+  <div class="ranking-grid" id="ranking-grid"></div>
+</div>
+
+</div><!-- /main -->
+
+<!-- ══ MODAL CANDIDATO ══ -->
+<div class="mo" id="mo-candidato">
+<div class="md md-lg">
+  <div class="md-header">
+    <div>
+      <div class="md-title" id="mc-nombre"></div>
+      <div class="md-sub" id="mc-sub"></div>
+    </div>
+    <button class="md-close" onclick="cerrar('mo-candidato')">✕</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="tab(this,'tab-info')">Información</button>
+    <button class="tab" onclick="tab(this,'tab-timeline')">Timeline</button>
+    <button class="tab" onclick="tab(this,'tab-edit')">Editar</button>
+  </div>
+
+  <!-- INFO -->
+  <div id="tab-info">
+    <div class="md-grid" id="mc-fields"></div>
+    <div class="md-actions">
+      <button class="btn btn-p btn-sm" onclick="whatsapp()">💬 WhatsApp</button>
+      <button class="btn btn-g btn-sm" onclick="irEditar()">✏ Editar / Cambiar Estado</button>
+      <button class="btn btn-o btn-sm" onclick="cerrar('mo-candidato')">Cerrar</button>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div id="tab-timeline" style="display:none">
+    <div class="timeline" id="mc-timeline"></div>
+  </div>
+
+  <!-- EDITAR -->
+  <div id="tab-edit" style="display:none">
+    <div class="form-grid" style="margin-bottom:12px">
+      <div class="fg"><label>Nombre</label><input id="e-nombre" type="text"></div>
+      <div class="fg"><label>Teléfono</label><input id="e-tel" type="text"></div>
+      <div class="fg"><label>Fuente</label>
+        <select id="e-fuente"><option>Meta ADS</option><option>Linkedin</option><option>Pagina LB</option><option>CV Referido</option><option>CV Espontaneo</option></select>
+      </div>
+      <div class="fg"><label>Cohorte</label><input id="e-cohorte" type="text"></div>
+      <div class="fg"><label>Estado</label>
+        <select id="e-estado" onchange="mostrarCamposEstado()">
+          <option>A contactar</option><option>En proceso</option><option>Entrevistado</option>
+          <option>Aprobado para Broker</option><option>Próximo Ingreso</option>
+          <option>Ingresado</option><option>Rechazado/Baja</option>
+        </select>
+      </div>
+      <div class="fg"><label>Score</label><input id="e-score" type="number" min="0" max="35"></div>
+      <div class="fg" id="eg-contacto"><label>Fecha 1° Contacto</label><input id="e-f-contacto" type="date"></div>
+      <div class="fg" id="eg-entrevista"><label>Fecha Entrevista</label><input id="e-f-entrevista" type="date"></div>
+      <div class="fg" id="eg-broker"><label>Fecha Entrevista Broker</label><input id="e-f-broker" type="date"></div>
+      <div class="fg" id="eg-ingreso"><label>Fecha Ingreso</label><input id="e-f-ingreso" type="date"></div>
+      <div class="fg" id="eg-motivo" style="display:none"><label>Motivo Rechazo</label>
+        <select id="e-motivo">
+          <option>Sin respuesta en varias Oportunidades</option>
+          <option>No Califica</option><option>Personal Foraneo</option>
+          <option>Rechaza Propuesta</option><option>Relación de Dependencia</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="fg full"><label>Comentarios</label><textarea id="e-comentarios"></textarea></div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p btn-sm" onclick="guardarEdicion()">💾 Guardar Cambios</button>
+      <button class="btn btn-r btn-sm" onclick="eliminarCandidato()">🗑 Eliminar</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══ MODAL NUEVO ══ -->
+<div class="mo" id="mo-nuevo">
+<div class="md">
+  <div class="md-header">
+    <div><div class="md-title">Nuevo Candidato</div><div class="md-sub">Completá los datos del postulante</div></div>
+    <button class="md-close" onclick="cerrar('mo-nuevo')">✕</button>
+  </div>
+  <div class="form-grid">
+    <div class="fg full"><label>Nombre Completo *</label><input id="n-nombre" type="text" placeholder="Ej: Juan Pérez"></div>
+    <div class="fg"><label>Teléfono</label><input id="n-tel" type="text" placeholder="2994000000"></div>
+    <div class="fg"><label>Fecha Postulación</label><input id="n-fecha" type="date"></div>
+    <div class="fg"><label>Fuente</label>
+      <select id="n-fuente"><option>Meta ADS</option><option>Linkedin</option><option>Pagina LB</option><option>CV Referido</option><option>CV Espontaneo</option></select>
+    </div>
+    <div class="fg"><label>Cohorte</label><input id="n-cohorte" type="text" placeholder="AG - 032026"></div>
+    <div class="fg full"><label>Comentarios iniciales</label><textarea id="n-comentarios" placeholder="Observaciones…"></textarea></div>
+  </div>
+  <div class="md-actions">
+    <button class="btn btn-p" onclick="guardarNuevo()">Guardar Candidato</button>
+    <button class="btn btn-o" onclick="cerrar('mo-nuevo')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ MODAL ENTREVISTA ══ -->
+<div class="mo" id="mo-entrevista">
+<div class="md">
+  <div class="md-header">
+    <div><div class="md-title">Cargar Entrevista</div><div class="md-sub">Evaluación de candidato</div></div>
+    <button class="md-close" onclick="cerrar('mo-entrevista')">✕</button>
+  </div>
+  <div class="form-grid-3" style="margin-bottom:14px">
+    <div class="fg"><label>Cohorte</label><input id="ei-cohorte" type="text" placeholder="AG - 032026"></div>
+    <div class="fg"><label>Candidato</label><input id="ei-candidato" type="text" placeholder="Nombre completo"></div>
+    <div class="fg"><label>Fecha Entrevista</label><input id="ei-fecha" type="date"></div>
+    <div class="fg"><label>Localidad</label><input id="ei-localidad" type="text" placeholder="Neuquén"></div>
+    <div class="fg"><label>Edad</label><input id="ei-edad" type="number" placeholder="35"></div>
+  </div>
+  <div style="background:var(--bg);border-radius:8px;padding:14px;margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Puntuación (1 = Bajo · 5 = Excelente)</div>
+    <div class="form-grid">
+      <div class="fg"><label>Autogestión</label><input id="ei-auto" type="number" min="1" max="5" placeholder="1-5"></div>
+      <div class="fg"><label>Compromiso</label><input id="ei-comp" type="number" min="1" max="5" placeholder="1-5"></div>
+      <div class="fg"><label>Ambición</label><input id="ei-amb" type="number" min="1" max="5" placeholder="1-5"></div>
+      <div class="fg"><label>Presentación personal</label><input id="ei-pres" type="number" min="1" max="5" placeholder="1-5"></div>
+      <div class="fg"><label>Comunicación</label><input id="ei-com" type="number" min="1" max="5" placeholder="1-5"></div>
+      <div class="fg"><label>Colchón Financiero</label><input id="ei-fin" type="number" min="1" max="5" placeholder="1-5"></div>
+      <div class="fg"><label>Red de Contactos</label><input id="ei-red" type="number" min="1" max="5" placeholder="1-5"></div>
+      <div class="fg"><label>Ponderación Personal</label><input id="ei-pond" type="number" min="1" max="5" step="0.5" placeholder="1-5"></div>
+    </div>
+  </div>
+  <div class="form-grid">
+    <div class="fg"><label>Fortaleza principal</label><input id="ei-fort" type="text" placeholder="Ej: Red de contactos amplia"></div>
+    <div class="fg"><label>Debilidad / Punto a trabajar</label><input id="ei-deb" type="text" placeholder="Ej: Primera experiencia comercial"></div>
+  </div>
+  <div style="margin-top:10px;padding:10px;background:var(--verde-xs);border-radius:7px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:13px;font-weight:600;color:var(--verde-dark)">Puntaje Total:</span>
+    <span id="ei-total" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--verde-dark)">—</span>
+  </div>
+  <div class="md-actions">
+    <button class="btn btn-g" onclick="guardarEntrevista()">Guardar Evaluación</button>
+    <button class="btn btn-o" onclick="cerrar('mo-entrevista')">Cancelar</button>
+  </div>
+</div>
+</div>
+
+<!-- ══ MODAL SHEETS INFO ══ -->
+<div class="mo" id="mo-sheets">
+<div class="md md-sm">
+  <div class="md-header">
+    <div><div class="md-title">📋 Sincronizar con Google Sheets</div></div>
+    <button class="md-close" onclick="cerrar('mo-sheets')">✕</button>
+  </div>
+  <div style="font-size:13px;line-height:1.7;color:var(--text)">
+    <p style="margin-bottom:10px">Para exportar los cambios a tu planilla tenés 2 opciones:</p>
+    <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:10px;border-left:3px solid var(--verde)">
+      <strong>Opción 1 — Exportar CSV:</strong><br>
+      Hacé click en "Exportar CSV", abrí tu Google Sheets, seleccioná la hoja <code>BD_Candidatos</code>, 
+      y pegá los datos (Archivo → Importar → Reemplazar hoja actual).
+    </div>
+    <div style="background:var(--bg);border-radius:8px;padding:12px;border-left:3px solid var(--oro)">
+      <strong>Opción 2 — Google Apps Script:</strong><br>
+      Si querés sincronización automática, puedo generarte un script que se instala en tu Sheets 
+      y recibe datos desde esta app via webhook. ¿Lo querés?
+    </div>
+  </div>
+  <div style="margin-top:16px;display:flex;gap:8px">
+    <button class="btn btn-p btn-sm" onclick="exportCSV();cerrar('mo-sheets')">⬇ Exportar CSV Ahora</button>
+    <button class="btn btn-o btn-sm" onclick="cerrar('mo-sheets')">Cerrar</button>
+  </div>
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA — candidatos reales de la BD + ranking
+// ═══════════════════════════════════════════
+let DATA = [
+  {id:1,fecha:'2026-02-01',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Mariana Gisele',telefono:'3757517453',estado:'A contactar',fechaContacto:'',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:'Full Time'},
+  {id:2,fecha:'2025-09-09',fuente:'Meta ADS',cohorte:'AG - 112025',nombre:'Naty Mirazo',telefono:'2984678794',estado:'Rechazado/Baja',fechaContacto:'2025-10-05',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Sin respuesta en varias Oportunidades',score:0,comentarios:'Sin respuesta en varias oportunidades'},
+  {id:3,fecha:'2025-09-09',fuente:'Meta ADS',cohorte:'AG - 112025',nombre:'Mica Baca',telefono:'2644525966',estado:'Rechazado/Baja',fechaContacto:'2025-10-05',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Sin respuesta en varias Oportunidades',score:0,comentarios:''},
+  {id:4,fecha:'2025-09-09',fuente:'Meta ADS',cohorte:'AG - 112025',nombre:'Damaris Rubilar',telefono:'2996208216',estado:'Rechazado/Baja',fechaContacto:'2025-10-05',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Sin respuesta en varias Oportunidades',score:0,comentarios:''},
+  {id:5,fecha:'2025-09-09',fuente:'Meta ADS',cohorte:'AG - 112025',nombre:'Agustina Funes',telefono:'2995185449',estado:'Rechazado/Baja',fechaContacto:'2025-10-05',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Sin respuesta en varias Oportunidades',score:0,comentarios:''},
+  {id:6,fecha:'2025-11-01',fuente:'Meta ADS',cohorte:'AG - 012026',nombre:'Jessica Castro',telefono:'2996123456',estado:'Ingresado',fechaContacto:'2025-11-05',fechaEntrevista:'2025-12-10',fechaBroker:'2025-12-18',fechaIngreso:'2026-01-15',motivoRechazo:'',score:26,comentarios:'Excelente perfil. Red de contactos amplia.'},
+  {id:7,fecha:'2025-11-02',fuente:'Meta ADS',cohorte:'AG - 012026',nombre:'Norberto Chanampa',telefono:'2994234567',estado:'Ingresado',fechaContacto:'2025-11-06',fechaEntrevista:'2025-12-12',fechaBroker:'2025-12-20',fechaIngreso:'2026-01-15',motivoRechazo:'',score:26,comentarios:'Ex profesor jubilado, muy motivado'},
+  {id:8,fecha:'2025-11-03',fuente:'Linkedin',cohorte:'AG - 012026',nombre:'Irma Tejeda',telefono:'2996345678',estado:'Ingresado',fechaContacto:'2025-11-07',fechaEntrevista:'2025-12-11',fechaBroker:'2025-12-19',fechaIngreso:'2026-01-15',motivoRechazo:'',score:20,comentarios:'Ex Remax, experiencia en el rubro'},
+  {id:9,fecha:'2025-11-05',fuente:'Meta ADS',cohorte:'AG - 012026',nombre:'Nicole Griffouliera',telefono:'2996456789',estado:'Ingresado',fechaContacto:'2025-11-10',fechaEntrevista:'2025-12-12',fechaBroker:'2025-12-22',fechaIngreso:'2026-01-15',motivoRechazo:'',score:30,comentarios:'Excelente comunicación y presentación'},
+  {id:10,fecha:'2025-11-10',fuente:'Linkedin',cohorte:'AG - 012026',nombre:'David Figueroa',telefono:'2994567890',estado:'Rechazado/Baja',fechaContacto:'2025-11-15',fechaEntrevista:'2025-12-18',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Rechaza Propuesta',score:26,comentarios:'Entiende de negocios. Rechaza la propuesta comisional.'},
+  {id:11,fecha:'2025-11-12',fuente:'Meta ADS',cohorte:'AG - 012026',nombre:'Sofia Toth',telefono:'2296678901',estado:'Rechazado/Baja',fechaContacto:'2025-11-18',fechaEntrevista:'2025-12-15',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Personal Foraneo',score:17,comentarios:'Es de General Roca, requiere días fijos para viajar'},
+  {id:12,fecha:'2026-01-15',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Yanira Crespo',telefono:'2996100200',estado:'Aprobado para Broker',fechaContacto:'2026-01-20',fechaEntrevista:'2026-02-12',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:26,comentarios:'Estudiante de Mart. Publico con ganas. Primera experiencia comercial.'},
+  {id:13,fecha:'2026-01-16',fuente:'Linkedin',cohorte:'AG - 032026',nombre:'Juan Ignacio Fernandez',telefono:'2994300400',estado:'Entrevistado',fechaContacto:'2026-01-21',fechaEntrevista:'2026-02-03',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:16,comentarios:'Total disponibilidad. Requiere trabajar presentación personal.'},
+  {id:14,fecha:'2026-01-18',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Lorena Castro',telefono:'2996500600',estado:'Entrevistado',fechaContacto:'2026-01-24',fechaEntrevista:'2026-02-19',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:23,comentarios:'Trabaja en PSA hace 7 años, quiere complementar'},
+  {id:15,fecha:'2026-01-20',fuente:'CV Referido',cohorte:'AG - 032026',nombre:'Gustavo Maldonado',telefono:'2994700800',estado:'Aprobado para Broker',fechaContacto:'2026-01-25',fechaEntrevista:'2026-02-10',fechaBroker:'2026-02-25',fechaIngreso:'',motivoRechazo:'',score:28,comentarios:'Referido por Chanampa. Excelente perfil.'},
+  {id:16,fecha:'2026-02-01',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Patricia Olmedo',telefono:'2996112233',estado:'Próximo Ingreso',fechaContacto:'2026-02-05',fechaEntrevista:'2026-02-20',fechaBroker:'2026-02-27',fechaIngreso:'2026-03-20',motivoRechazo:'',score:24,comentarios:'Confirma ingreso Cohorte Mayo'},
+  {id:17,fecha:'2026-02-02',fuente:'Linkedin',cohorte:'AG - 032026',nombre:'Hernán Castillo',telefono:'2994223344',estado:'Próximo Ingreso',fechaContacto:'2026-02-06',fechaEntrevista:'2026-02-21',fechaBroker:'2026-02-28',fechaIngreso:'2026-03-20',motivoRechazo:'',score:22,comentarios:'Disponible desde Marzo'},
+  {id:18,fecha:'2026-02-03',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Belén Torres',telefono:'2996334455',estado:'Ingresado',fechaContacto:'2026-02-07',fechaEntrevista:'2026-02-22',fechaBroker:'2026-03-01',fechaIngreso:'2026-03-10',motivoRechazo:'',score:25,comentarios:'Ingresó Cohorte Marzo'},
+  {id:19,fecha:'2026-02-05',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Rodrigo Blanco',telefono:'2994678901',estado:'A contactar',fechaContacto:'',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:''},
+  {id:20,fecha:'2026-02-06',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Sofía Mendez',telefono:'2996789012',estado:'A contactar',fechaContacto:'',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:'Part time'},
+  {id:21,fecha:'2026-02-07',fuente:'Linkedin',cohorte:'AG - 032026',nombre:'Tomás Figueroa',telefono:'2994890123',estado:'En proceso',fechaContacto:'2026-02-12',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:'Buen perfil, pendiente entrevista'},
+  {id:22,fecha:'2026-02-08',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Antonella Ríos',telefono:'2996901234',estado:'En proceso',fechaContacto:'2026-02-13',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:'Interesada, confirmar disponibilidad'},
+  {id:23,fecha:'2026-02-20',fuente:'Meta ADS',cohorte:'AG - 052026',nombre:'Camilo Navarro',telefono:'2994667788',estado:'A contactar',fechaContacto:'',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:''},
+  {id:24,fecha:'2026-02-21',fuente:'Meta ADS',cohorte:'AG - 052026',nombre:'Valentina Cruz',telefono:'2996778899',estado:'A contactar',fechaContacto:'',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:'Full time'},
+  {id:25,fecha:'2026-02-22',fuente:'Linkedin',cohorte:'AG - 052026',nombre:'Mateo Soria',telefono:'2994889900',estado:'A contactar',fechaContacto:'',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:''},
+  {id:26,fecha:'2026-02-23',fuente:'CV Referido',cohorte:'AG - 052026',nombre:'Paula Ibáñez',telefono:'2996990011',estado:'En proceso',fechaContacto:'2026-03-01',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:'Referida por Belén Torres'},
+  {id:27,fecha:'2026-02-24',fuente:'Meta ADS',cohorte:'AG - 052026',nombre:'Lucas Medina',telefono:'2994101112',estado:'En proceso',fechaContacto:'2026-03-02',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'',score:0,comentarios:'Interesado, pendiente confirmación'},
+  // Rechazados representativos
+  {id:28,fecha:'2026-01-10',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Carlos Mendoza',telefono:'2996200300',estado:'Rechazado/Baja',fechaContacto:'2026-01-15',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'No Califica',score:0,comentarios:'Sin perfil comercial'},
+  {id:29,fecha:'2026-01-12',fuente:'Linkedin',cohorte:'AG - 032026',nombre:'Mariela Sánchez',telefono:'2994400500',estado:'Rechazado/Baja',fechaContacto:'2026-01-18',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Personal Foraneo',score:0,comentarios:'Vive en Mendoza'},
+  {id:30,fecha:'2026-01-14',fuente:'Meta ADS',cohorte:'AG - 032026',nombre:'Franco López',telefono:'2996600700',estado:'Rechazado/Baja',fechaContacto:'2026-01-20',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',motivoRechazo:'Relación de Dependencia',score:0,comentarios:'Exige relación de dependencia'},
+];
+
+let ENTREVISTAS = [
+  {id:1,cohorte:'AG-012026',candidato:'Jessica Castro',localidad:'Neuquén',edad:40,fecha:'2025-12-10',autogestion:3,compromiso:4,ambicion:3,presentacion:3,comunicacion:3,colchon:4,red:3,ponderacion:3,fortaleza:'Red Contactos / Entusiasmo y ganas',debilidad:'Rigidez inicial / Mercado informal, requiere ordenar procesos'},
+  {id:2,cohorte:'AG-012026',candidato:'Irma Tejeda',localidad:'Neuquén',edad:59,fecha:'2025-12-11',autogestion:2,compromiso:2,ambicion:4,presentacion:1,comunicacion:4,colchon:4,red:3,ponderacion:2,fortaleza:'Ex Remax / Mart. Publica / Exp. en el Rubro',debilidad:'Aspecto algo desalineado / Disp. para el 26/01'},
+  {id:3,cohorte:'AG-012026',candidato:'Norberto Chanampa',localidad:'Neuquén',edad:61,fecha:'2025-12-12',autogestion:4,compromiso:4,ambicion:3,presentacion:4,comunicacion:3,colchon:4,red:4,ponderacion:4,fortaleza:'Ex Profesor Jubilado / Muy amable y genuino. Disponibilidad 100%',debilidad:'Hay que trabajar la forma de comunicación'},
+  {id:4,cohorte:'AG-012026',candidato:'Nicole Griffouliera',localidad:'Neuquén',edad:29,fecha:'2025-12-12',autogestion:4,compromiso:4,ambicion:4,presentacion:5,comunicacion:5,colchon:4,red:4,ponderacion:4.5,fortaleza:'Excelente comunicación y presentación',debilidad:''},
+  {id:5,cohorte:'AG-012026',candidato:'David Figueroa',localidad:'Neuquén',edad:41,fecha:'2025-12-18',autogestion:4,compromiso:4,ambicion:3,presentacion:3,comunicacion:3,colchon:4,red:3,ponderacion:3,fortaleza:'Entiende de negocios. Venta de fondos de comercio.',debilidad:'Hay que trabajar los puntos propios del negocio.'},
+  {id:6,cohorte:'AG-032026',candidato:'Yanira Crespo',localidad:'Neuquén',edad:null,fecha:'2026-02-12',autogestion:3,compromiso:4,ambicion:4,presentacion:4,comunicacion:4,colchon:3,red:4,ponderacion:3,fortaleza:'Estudiante de Mart. Publico con ganas. Buena presencia inicial.',debilidad:'Primera experiencia comercial'},
+  {id:7,cohorte:'AG-032026',candidato:'Juan Ignacio Fernandez',localidad:'Neuquén',edad:null,fecha:'2026-02-03',autogestion:4,compromiso:4,ambicion:3,presentacion:1,comunicacion:2,colchon:4,red:2,ponderacion:2.5,fortaleza:'Total disponibilidad y compromiso.',debilidad:'Desalineado para entrevista. Requiere corregir presentación.'},
+  {id:8,cohorte:'AG-032026',candidato:'Lorena Castro',localidad:'Centenario',edad:null,fecha:'2026-02-19',autogestion:4,compromiso:3,ambicion:3,presentacion:2,comunicacion:4,colchon:3,red:4,ponderacion:3,fortaleza:'Trabaja en PSA hace 7 años. Conoce de ventas.',debilidad:'PSA sigue siendo su principal ingreso. Debe complementar negocios.'},
+];
+
+const FINANZAS = [
+  {cohorte:'AG - 012026',inversion:38918.24},
+  {cohorte:'AG - 032026',inversion:104343.32},
+  {cohorte:'AG - 052026',inversion:0},
+];
+
+let filteredData = [...DATA];
+let currentPage = 1;
+const PAGE_SIZE = 20;
+let currentId = null;
+let sortField = null, sortAsc = true;
+
+// ── UTILS ──
+const fmt = d => { if(!d) return '—'; const p=d.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d; }
+const diasDesde = d => { if(!d) return null; const diff = (new Date()-new Date(d))/86400000; return Math.round(diff); }
+const diasEntre = (a,b) => { if(!a||!b) return null; return Math.round((new Date(b)-new Date(a))/86400000); }
+const scoreTotal = e => (e.autogestion||0)+(e.compromiso||0)+(e.ambicion||0)+(e.presentacion||0)+(e.comunicacion||0)+(e.colchon||0)+(e.red||0);
+const scoreColor = s => s>=28?'#1F6C43':s>=20?'#D4AF37':s>=14?'#f59e0b':'#ef4444';
+
+function fbc(f){
+  if(!f) return '';
+  if(f.includes('Meta')) return 'fb-meta';
+  if(f.includes('Linkedin')) return 'fb-li';
+  if(f.includes('Pagina')) return 'fb-lb';
+  if(f.includes('Referido')) return 'fb-ref';
+  return 'fb-esp';
+}
+function pill(e){
+  const m={'A contactar':'pill-ac','En proceso':'pill-ep','Entrevistado':'pill-en','Aprobado para Broker':'pill-br','Próximo Ingreso':'pill-pi','Ingresado':'pill-in','Rechazado/Baja':'pill-re'};
+  return `<span class="pill ${m[e]||''}">${e}</span>`;
+}
+function diasPill(n,size=''){
+  if(n===null) return '—';
+  const cl = n<=3?'dias-ok':n<=7?'dias-warn':'dias-late';
+  return `<span class="td-dias ${cl}" style="font-size:${size||'12px'}">${n}d</span>`;
+}
+
+function toast(msg,type='ok'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.display='block';
+  setTimeout(()=>t.style.display='none',2500);
+}
+
+// ── NAV ──
+function nav(v,btn){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.nb:not(.btn-nuevo)').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(v==='kanban') renderKanban();
+  if(v==='candidatos') filtrar();
+  if(v==='dashboard') renderDash();
+  if(v==='entrevistas') renderEntrevistas();
+}
+
+// ── DASHBOARD ──
+function renderDash(){
+  const cf=document.getElementById('dash-cohorte').value;
+  const ff=document.getElementById('dash-fuente').value;
+  let D=DATA.filter(c=>(!cf||c.cohorte===cf)&&(!ff||c.fuente===ff));
+  const total=D.length, ing=D.filter(c=>c.estado==='Ingresado').length,
+    act=D.filter(c=>!['Rechazado/Baja','Ingresado'].includes(c.estado)).length,
+    ent=D.filter(c=>c.fechaEntrevista).length,
+    tasa=total?((ing/total)*100).toFixed(1):0;
+
+  // Tiempos promedio
+  const reacciones=D.filter(c=>c.fechaContacto&&c.fecha).map(c=>diasEntre(c.fecha,c.fechaContacto)).filter(v=>v!==null&&v>=0);
+  const hirings=D.filter(c=>c.fechaIngreso&&c.fecha).map(c=>diasEntre(c.fecha,c.fechaIngreso)).filter(v=>v!==null&&v>=0);
+  const avgReacc=reacciones.length?Math.round(reacciones.reduce((a,b)=>a+b,0)/reacciones.length):null;
+  const avgHiring=hirings.length?Math.round(hirings.reduce((a,b)=>a+b,0)/hirings.length):null;
+
+  document.getElementById('kpi-grid').innerHTML=`
+    <div class="kpi"><div class="kpi-label">Total Candidatos</div><div class="kpi-val">${total}</div><div class="kpi-sub">histórico acumulado</div></div>
+    <div class="kpi"><div class="kpi-label">En Pipeline</div><div class="kpi-val blue">${act}</div><div class="kpi-sub">sin rechazados</div></div>
+    <div class="kpi"><div class="kpi-label">Entrevistados</div><div class="kpi-val">${ent}</div><div class="kpi-sub">pasaron entrevista</div></div>
+    <div class="kpi"><div class="kpi-label">Ingresados</div><div class="kpi-val oro">${ing}</div><div class="kpi-sub">agentes confirmados</div></div>
+    <div class="kpi"><div class="kpi-label">Tasa Conversión</div><div class="kpi-val">${tasa}%</div><div class="kpi-sub">postulado → ingresado</div></div>
+    <div class="kpi"><div class="kpi-label">T. Reacción Prom.</div><div class="kpi-val${avgReacc&&avgReacc>7?' red':''}">${avgReacc!==null?avgReacc+'d':'—'}</div><div class="kpi-sub">días hasta 1° contacto</div></div>
+  `;
+
+  // Funnel
+  const fsteps=[
+    {l:'Postulados',n:total,c:'#6366f1'},{l:'1° Contacto',n:D.filter(c=>c.fechaContacto).length,c:'#3b82f6'},
+    {l:'Entrevistados',n:ent,c:'#f59e0b'},{l:'Aprobados Broker',n:D.filter(c=>['Aprobado para Broker','Próximo Ingreso','Ingresado'].includes(c.estado)).length,c:'#D4AF37'},
+    {l:'Ingresados',n:ing,c:'#1F6C43'},
+  ];
+  document.getElementById('ch-funnel').innerHTML=fsteps.map((s,i)=>{
+    const pct=i===0?100:(s.n/total*100).toFixed(1);
+    const w=100-i*14;
+    return `<div class="fs" style="background:${s.c};width:${w}%"><span>${s.l}: <strong>${s.n}</strong></span><span class="fs-pct">${pct}%</span></div>${i<fsteps.length-1?'<div class="fs-arrow">▼</div>':''}`;
+  }).join('');
+
+  // Fuentes
+  const fuentes={};D.forEach(c=>{fuentes[c.fuente||'Otro']=(fuentes[c.fuente||'Otro']||0)+1;});
+  const fMax=Math.max(...Object.values(fuentes));
+  const fColors=['#1F6C43','#D4AF37','#3b82f6','#8b5cf6','#f59e0b'];
+  document.getElementById('ch-fuentes').innerHTML=Object.entries(fuentes).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`
+    <div class="bar-row"><div class="bar-lbl">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/fMax*100).toFixed(0)}%;background:${fColors[i%5]}">${v}</div></div><div class="bar-n">${(v/total*100).toFixed(0)}%</div></div>`).join('');
+
+  // Motivos
+  const motivos={};D.filter(c=>c.estado==='Rechazado/Baja').forEach(c=>{const m=c.motivoRechazo||'Sin especificar';motivos[m]=(motivos[m]||0)+1;});
+  const mMax=Math.max(...Object.values(motivos));
+  const mColors=['#ef4444','#f97316','#eab308','#8b5cf6','#6b7280'];
+  document.getElementById('ch-motivos').innerHTML=Object.entries(motivos).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`
+    <div class="bar-row"><div class="bar-lbl">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/mMax*100).toFixed(0)}%;background:${mColors[i%5]}">${v}</div></div><div class="bar-n">${v}</div></div>`).join('');
+
+  // Cohortes
+  const cohortes={};D.forEach(c=>{if(c.cohorte)cohortes[c.cohorte]=(cohortes[c.cohorte]||0)+1;});
+  const cMax=Math.max(...Object.values(cohortes));
+  document.getElementById('ch-cohortes').innerHTML=Object.entries(cohortes).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
+    <div class="bar-row"><div class="bar-lbl">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/cMax*100).toFixed(0)}%;background:#1F6C43">${v}</div></div><div class="bar-n">${v}</div></div>`).join('');
+
+  // Tiempos
+  document.getElementById('ch-tiempos').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:4px">
+      <div><div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Tiempo hasta 1° Contacto</div>
+        <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:${avgReacc>7?'var(--red)':'var(--verde-dark)'}">${avgReacc!==null?avgReacc+' días':'Sin datos'}</div>
+        <div style="font-size:12px;color:var(--muted)">Recomendado: ≤ 2 días. ${avgReacc&&avgReacc>2?'⚠️ Hay oportunidad de mejora':'✅ Buen tiempo de reacción'}</div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:14px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Tiempo Total de Hiring</div>
+        <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--verde-dark)">${avgHiring!==null?avgHiring+' días':'Sin datos'}</div>
+        <div style="font-size:12px;color:var(--muted)">Desde postulación hasta ingreso efectivo</div>
+      </div>
+    </div>`;
+
+  // Costo por ingresante
+  const costoTotal=FINANZAS.reduce((a,b)=>a+(b.inversion||0),0);
+  const cpi=ing>0?(costoTotal/ing).toFixed(0):null;
+  document.getElementById('ch-costo').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <div><div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Inversión Total</div>
+        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--verde-dark)">$${costoTotal.toLocaleString('es-AR')}</div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:10px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Costo por Ingresante</div>
+        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--oro-dark)">${cpi?'$'+Number(cpi).toLocaleString('es-AR'):'Sin datos'}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${ing} ingresados hasta la fecha</div>
+      </div>
+      ${FINANZAS.filter(f=>f.inversion>0).map(f=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 8px;background:var(--bg);border-radius:6px"><span style="color:var(--muted)">${f.cohorte}</span><strong>$${f.inversion.toLocaleString('es-AR')}</strong></div>`).join('')}
+    </div>`;
+
+  // Pendientes de acción
+  const hoy=new Date();
+  const pendientes=DATA.filter(c=>c.estado==='A contactar');
+  const demorados=DATA.filter(c=>c.estado==='En proceso'&&c.fechaContacto&&diasDesde(c.fechaContacto)>7);
+  const sinScore=DATA.filter(c=>c.fechaEntrevista&&!c.score);
+  document.getElementById('ch-pendientes').innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;background:#ede9fe;cursor:pointer" onclick="nav('candidatos',document.querySelectorAll('.nb')[2]);document.getElementById('b-estado').value='A contactar';filtrar()">
+        <div><div style="font-weight:700;color:#5b21b6;font-size:13px">🔔 Sin contactar</div><div style="font-size:11px;color:#7c3aed">requieren 1° contacto urgente</div></div>
+        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#5b21b6">${pendientes.length}</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;background:#fef3c7">
+        <div><div style="font-weight:700;color:#92400e;font-size:13px">⏰ En proceso +7 días</div><div style="font-size:11px;color:#b45309">sin avanzar en el proceso</div></div>
+        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#92400e">${demorados.length}</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;background:#fef9c3">
+        <div><div style="font-weight:700;color:#713f12;font-size:13px">📝 Sin score asignado</div><div style="font-size:11px;color:#92400e">entrevistados sin evaluación</div></div>
+        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#713f12">${sinScore.length}</div>
+      </div>
+    </div>`;
+}
+
+// ── KANBAN ──
+const KCOLS=[
+  {k:'A contactar',l:'A Contactar',css:'col-ac'},{k:'En proceso',l:'En Proceso',css:'col-ep'},
+  {k:'Entrevistado',l:'Entrevistado',css:'col-en'},{k:'Aprobado para Broker',l:'Aprobado Broker',css:'col-br'},
+  {k:'Próximo Ingreso',l:'Próximo Ingreso',css:'col-pi'},{k:'Ingresado',l:'Ingresado ✓',css:'col-in'},
+];
+function renderKanban(){
+  const cf=document.getElementById('k-cohorte').value;
+  const ff=document.getElementById('k-fuente').value;
+  let D=DATA.filter(c=>c.estado!=='Rechazado/Baja');
+  if(cf) D=D.filter(c=>c.cohorte===cf);
+  if(ff) D=D.filter(c=>c.fuente===ff);
+  document.getElementById('kanban-board').innerHTML=KCOLS.map(col=>{
+    const cards=D.filter(c=>c.estado===col.k);
+    return `<div class="kcol ${col.css}">
+      <div class="kcol-hd"><div class="kcol-title">${col.l}</div><div class="kcol-badge">${cards.length}</div></div>
+      <div class="kcards">${cards.length===0?'<div style="text-align:center;color:#ccc;font-size:11px;padding:10px">—</div>':
+        cards.map(c=>{
+          const hoy=new Date();
+          let dias=null, diasLabel='';
+          if(col.k==='A contactar'&&c.fecha){dias=diasDesde(c.fecha);diasLabel=`⏱ Postulado hace ${diasPill(dias,'11px')}`;}
+          else if(col.k==='En proceso'&&c.fechaContacto){dias=diasDesde(c.fechaContacto);diasLabel=`⏱ En proceso ${diasPill(dias,'11px')}`;}
+          return `<div class="kcard" onclick="abrirCandidato(${c.id})">
+            <div class="kcard-name">${c.nombre}</div>
+            <div class="kcard-meta">
+              ${c.cohorte?`<span>📅 ${c.cohorte}</span>`:''}
+              ${c.fechaEntrevista?`<span>🗓 Entrevista: ${fmt(c.fechaEntrevista)}</span>`:''}
+              ${c.score?`<span>⭐ Score: ${c.score}/35</span>`:''}
+              ${diasLabel?`<span>${diasLabel}</span>`:''}
+            </div>
+            <span class="fb ${fbc(c.fuente)}">${c.fuente||'—'}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── TABLA ──
+function sortBy(f){
+  if(sortField===f) sortAsc=!sortAsc; else {sortField=f;sortAsc=true;}
+  filtrar();
+}
+function filtrar(){
+  const q=document.getElementById('b-buscar').value.toLowerCase();
+  const est=document.getElementById('b-estado').value;
+  const fue=document.getElementById('b-fuente').value;
+  const coh=document.getElementById('b-cohorte').value;
+  filteredData=DATA.filter(c=>
+    (!q||c.nombre.toLowerCase().includes(q))&&
+    (!est||c.estado===est)&&(!fue||c.fuente===fue)&&(!coh||c.cohorte===coh)
+  );
+  if(sortField){
+    filteredData.sort((a,b)=>{
+      let va=a[sortField]||'',vb=b[sortField]||'';
+      if(sortField==='score'){va=+va;vb=+vb;}
+      return sortAsc?(va<vb?-1:va>vb?1:0):(va>vb?-1:va<vb?1:0);
+    });
+  }
+  currentPage=1; renderTabla();
+}
+function renderTabla(){
+  const start=(currentPage-1)*PAGE_SIZE;
+  const page=filteredData.slice(start,start+PAGE_SIZE);
+  document.getElementById('tabla-body').innerHTML=page.length===0
+    ?`<tr><td colspan="10"><div class="empty"><div class="empty-icon">🔍</div>No se encontraron candidatos</div></td></tr>`
+    :page.map(c=>{
+      const tr=diasEntre(c.fecha,c.fechaContacto);
+      const th=diasEntre(c.fecha,c.fechaIngreso);
+      return`<tr>
+        <td class="td-name">${c.nombre}</td>
+        <td><span class="fb ${fbc(c.fuente)}" style="padding:3px 8px;border-radius:4px">${c.fuente||'—'}</span></td>
+        <td class="td-muted">${c.cohorte||'—'}</td>
+        <td>${pill(c.estado)}</td>
+        <td class="td-muted">${fmt(c.fecha)}</td>
+        <td>${tr!==null?diasPill(tr):'—'}</td>
+        <td>${th!==null?`<span class="td-dias" style="font-size:12px">${th}d</span>`:'—'}</td>
+        <td style="text-align:center">${c.score?`<strong style="color:var(--verde-dark)">${c.score}</strong>`:'—'}</td>
+        <td class="td-muted" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.motivoRechazo}">${c.motivoRechazo||'—'}</td>
+        <td><button class="btn btn-o btn-xs" onclick="abrirCandidato(${c.id})">Ver</button></td>
+      </tr>`;
+    }).join('');
+  const total=filteredData.length, pages=Math.ceil(total/PAGE_SIZE);
+  let pag=`<span style="font-size:11px;color:var(--muted);margin-right:8px">${total} candidatos</span>`;
+  for(let i=1;i<=Math.min(pages,8);i++) pag+=`<button class="pb${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+  if(pages>8) pag+=`<span style="color:var(--muted);font-size:12px"> …${pages}</span>`;
+  document.getElementById('paginacion').innerHTML=pag;
+}
+function goPage(p){currentPage=p;renderTabla();}
+
+// ── MODAL CANDIDATO ──
+function abrirCandidato(id){
+  currentId=id;
+  const c=DATA.find(d=>d.id===id);
+  document.getElementById('mc-nombre').textContent=c.nombre;
+  document.getElementById('mc-sub').textContent=`${c.cohorte||''} · ${c.fuente||''} · ${c.estado}`;
+  const tr=diasEntre(c.fecha,c.fechaContacto);
+  const th=diasEntre(c.fecha,c.fechaIngreso);
+  document.getElementById('mc-fields').innerHTML=`
+    <div class="mf"><label>Teléfono</label><div class="v">${c.telefono||'—'}</div></div>
+    <div class="mf"><label>Estado</label><div class="v">${pill(c.estado)}</div></div>
+    <div class="mf"><label>Fecha Postulación</label><div class="v">${fmt(c.fecha)}</div></div>
+    <div class="mf"><label>1° Contacto</label><div class="v">${fmt(c.fechaContacto)}</div></div>
+    <div class="mf"><label>Entrevista</label><div class="v">${fmt(c.fechaEntrevista)}</div></div>
+    <div class="mf"><label>Entrevista Broker</label><div class="v">${fmt(c.fechaBroker)}</div></div>
+    <div class="mf"><label>Fecha Ingreso</label><div class="v">${fmt(c.fechaIngreso)}</div></div>
+    <div class="mf"><label>Score</label><div class="v">${c.score?`<strong style="color:var(--verde-dark);font-size:18px">${c.score}/35</strong>`:'—'}</div></div>
+    ${tr!==null?`<div class="mf"><label>T. Reacción</label><div class="v">${diasPill(tr)} desde postulación a contacto</div></div>`:''}
+    ${th!==null?`<div class="mf"><label>T. Hiring Total</label><div class="v"><strong>${th} días</strong></div></div>`:''}
+    ${c.motivoRechazo?`<div class="mf full"><label>Motivo Rechazo</label><div class="v" style="color:var(--red)">${c.motivoRechazo}</div></div>`:''}
+    ${c.comentarios?`<div class="mf full"><label>Comentarios</label><div class="v">${c.comentarios}</div></div>`:''}
+  `;
+  // Timeline
+  const steps=[
+    {l:'Postulación',d:c.fecha,done:!!c.fecha,curr:!c.fechaContacto&&!!c.fecha},
+    {l:'1° Contacto',d:c.fechaContacto,done:!!c.fechaContacto,curr:!!c.fechaContacto&&!c.fechaEntrevista},
+    {l:'Entrevista',d:c.fechaEntrevista,done:!!c.fechaEntrevista,curr:!!c.fechaEntrevista&&!c.fechaBroker&&!c.fechaIngreso},
+    {l:'Entrevista Broker',d:c.fechaBroker,done:!!c.fechaBroker,curr:!!c.fechaBroker&&!c.fechaIngreso},
+    {l:'Ingreso',d:c.fechaIngreso,done:!!c.fechaIngreso,curr:!!c.fechaIngreso},
+  ];
+  document.getElementById('mc-timeline').innerHTML=steps.map((s,i)=>{
+    const prev=steps[i-1];
+    const diff=prev&&s.d&&prev.d?diasEntre(prev.d,s.d):null;
+    return `<div class="tl-step">
+      <div class="tl-dot ${s.done?'done':s.curr?'curr':''}">${s.done?'✓':i+1}</div>
+      <div class="tl-content">
+        <div class="tl-title">${s.l}</div>
+        <div class="tl-date">${fmt(s.d)}</div>
+        ${diff!==null?`<div class="tl-days">+${diff} días desde paso anterior</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  // Pre-llenar form edición
+  document.getElementById('e-nombre').value=c.nombre;
+  document.getElementById('e-tel').value=c.telefono;
+  document.getElementById('e-fuente').value=c.fuente;
+  document.getElementById('e-cohorte').value=c.cohorte;
+  document.getElementById('e-estado').value=c.estado;
+  document.getElementById('e-score').value=c.score||'';
+  document.getElementById('e-f-contacto').value=c.fechaContacto||'';
+  document.getElementById('e-f-entrevista').value=c.fechaEntrevista||'';
+  document.getElementById('e-f-broker').value=c.fechaBroker||'';
+  document.getElementById('e-f-ingreso').value=c.fechaIngreso||'';
+  document.getElementById('e-motivo').value=c.motivoRechazo||'Sin respuesta en varias Oportunidades';
+  document.getElementById('e-comentarios').value=c.comentarios||'';
+  mostrarCamposEstado();
+  // Reset tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.tab').classList.add('active');
+  ['tab-info','tab-timeline','tab-edit'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById('tab-info').style.display='block';
+  document.getElementById('mo-candidato').classList.add('open');
+}
+
+function tab(btn,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  ['tab-info','tab-timeline','tab-edit'].forEach(i=>document.getElementById(i).style.display='none');
+  document.getElementById(id).style.display='block';
+}
+function irEditar(){tab(document.querySelectorAll('.tab')[2],'tab-edit');}
+
+function mostrarCamposEstado(){
+  const e=document.getElementById('e-estado').value;
+  document.getElementById('eg-motivo').style.display=e==='Rechazado/Baja'?'block':'none';
+  ['eg-contacto','eg-entrevista','eg-broker','eg-ingreso'].forEach(id=>document.getElementById(id).style.display='block');
+}
+
+function guardarEdicion(){
+  const c=DATA.find(d=>d.id===currentId);
+  c.nombre=document.getElementById('e-nombre').value;
+  c.telefono=document.getElementById('e-tel').value;
+  c.fuente=document.getElementById('e-fuente').value;
+  c.cohorte=document.getElementById('e-cohorte').value;
+  c.estado=document.getElementById('e-estado').value;
+  c.score=+document.getElementById('e-score').value||0;
+  c.fechaContacto=document.getElementById('e-f-contacto').value;
+  c.fechaEntrevista=document.getElementById('e-f-entrevista').value;
+  c.fechaBroker=document.getElementById('e-f-broker').value;
+  c.fechaIngreso=document.getElementById('e-f-ingreso').value;
+  c.motivoRechazo=c.estado==='Rechazado/Baja'?document.getElementById('e-motivo').value:'';
+  c.comentarios=document.getElementById('e-comentarios').value;
+  cerrar('mo-candidato');
+  toast(`✅ ${c.nombre} actualizado`);
+  filtrar(); renderDash(); renderKanban(); populateFiltros();
+}
+
+function eliminarCandidato(){
+  if(!confirm('¿Eliminar este candidato?')) return;
+  DATA=DATA.filter(d=>d.id!==currentId);
+  cerrar('mo-candidato');
+  toast('🗑 Candidato eliminado');
+  filtrar(); renderDash();
+}
+
+function whatsapp(){
+  const c=DATA.find(d=>d.id===currentId);
+  if(!c) return;
+  const tel=c.telefono.replace(/\D/g,'');
+  window.open(`https://wa.me/549${tel}?text=Hola%20${encodeURIComponent(c.nombre)}%2C%20te%20contactamos%20desde%20LandrianiBlenkmann%20sobre%20tu%20postulaci%C3%B3n.`,'_blank');
+}
+
+// ── NUEVO ──
+function abrirNuevo(){
+  document.getElementById('n-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('n-cohorte').value=cohorteActual();
+  document.getElementById('mo-nuevo').classList.add('open');
+}
+function cohorteActual(){
+  const cohortes=[...new Set(DATA.map(c=>c.cohorte).filter(Boolean))].sort();
+  return cohortes[cohortes.length-1]||'';
+}
+function guardarNuevo(){
+  const nombre=document.getElementById('n-nombre').value.trim();
+  if(!nombre){toast('⚠️ Ingresá el nombre');return;}
+  const nuevo={
+    id:DATA.length?Math.max(...DATA.map(d=>d.id))+1:1,
+    nombre, telefono:document.getElementById('n-tel').value,
+    fecha:document.getElementById('n-fecha').value,
+    fuente:document.getElementById('n-fuente').value,
+    cohorte:document.getElementById('n-cohorte').value,
+    comentarios:document.getElementById('n-comentarios').value,
+    estado:'A contactar',fechaContacto:'',fechaEntrevista:'',fechaBroker:'',fechaIngreso:'',
+    motivoRechazo:'',score:0,
+  };
+  DATA.unshift(nuevo);
+  cerrar('mo-nuevo');
+  ['n-nombre','n-tel','n-comentarios'].forEach(id=>document.getElementById(id).value='');
+  toast(`✅ ${nombre} agregado al pipeline`);
+  filtrar(); renderDash(); renderKanban(); populateFiltros();
+}
+
+// ── ENTREVISTAS ──
+function renderEntrevistas(){
+  const cf=document.getElementById('e-cohorte').value;
+  let E=ENTREVISTAS;
+  if(cf) E=E.filter(e=>e.cohorte===cf||e.cohorte.replace(' ','')===cf.replace(' ',''));
+  E=E.sort((a,b)=>scoreTotal(b)-scoreTotal(a));
+  document.getElementById('ranking-grid').innerHTML=E.length===0
+    ?`<div class="empty"><div class="empty-icon">📋</div>No hay entrevistas cargadas para esta cohorte</div>`
+    :E.map((e,i)=>{
+      const total=scoreTotal(e);
+      const max=35;
+      const pct=(total/max*100).toFixed(0);
+      const sc=scoreColor(total);
+      const campos=[
+        {l:'Autogestión',v:e.autogestion},{l:'Compromiso',v:e.compromiso},
+        {l:'Ambición',v:e.ambicion},{l:'Presentación',v:e.presentacion},
+        {l:'Comunicación',v:e.comunicacion},{l:'Colchón Fin.',v:e.colchon},
+        {l:'Red Contactos',v:e.red},
+      ];
+      return `<div class="rcard">
+        <div class="rcard-header">
+          <div>
+            <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:3px">#${i+1} · ${e.cohorte}</div>
+            <div class="rcard-name">${e.candidato}</div>
+            <div class="rcard-meta">${e.localidad||''}${e.edad?' · '+e.edad+' años':''} · ${fmt(e.fecha)}</div>
+          </div>
+          <div style="text-align:center">
+            <div class="score-circle" style="background:${sc}">${total}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:3px">de 35</div>
+          </div>
+        </div>
+        <div class="rcard-body">
+          <div style="background:var(--bg2);border-radius:6px;height:6px;margin-bottom:12px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:${sc};border-radius:6px;transition:width .8s ease"></div>
+          </div>
+          <div class="score-bars">
+            ${campos.map(c=>`<div class="sb-row">
+              <div class="sb-lbl">${c.l}</div>
+              <div class="sb-dots">${[1,2,3,4,5].map(n=>`<div class="dot${n<=(c.v||0)?' filled':''}"></div>`).join('')}</div>
+            </div>`).join('')}
+            ${e.ponderacion?`<div class="sb-row"><div class="sb-lbl" style="color:var(--oro-dark);font-weight:700">Ponderación</div><div class="sb-dots">${[1,2,3,4,5].map(n=>`<div class="dot${n<=Math.round(e.ponderacion||0)?' filled':''}"></div>`).join('')}</div></div>`:''}
+          </div>
+        </div>
+        <div class="rcard-footer">
+          ${e.fortaleza?`<div class="rf-item"><div class="rf-label">✅ Fortaleza</div><div class="rf-val">${e.fortaleza}</div></div>`:'<div></div>'}
+          ${e.debilidad?`<div class="rf-item"><div class="rf-label">⚠️ A trabajar</div><div class="rf-val">${e.debilidad}</div></div>`:'<div></div>'}
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function abrirNuevaEntrevista(){
+  document.getElementById('ei-fecha').value=new Date().toISOString().split('T')[0];
+  document.getElementById('ei-cohorte').value=cohorteActual();
+  ['ei-candidato','ei-localidad','ei-edad','ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red','ei-pond','ei-fort','ei-deb'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ei-total').textContent='—';
+  document.getElementById('mo-entrevista').classList.add('open');
+  // Calcular total en tiempo real
+  ['ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',calcTotal);
+  });
+}
+function calcTotal(){
+  const ids=['ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red'];
+  const total=ids.reduce((s,id)=>s+(+document.getElementById(id).value||0),0);
+  const el=document.getElementById('ei-total');
+  el.textContent=total+' / 35';
+  el.style.color=scoreColor(total);
+}
+function guardarEntrevista(){
+  const candidato=document.getElementById('ei-candidato').value.trim();
+  if(!candidato){toast('⚠️ Ingresá el nombre del candidato');return;}
+  const ids=['ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red'];
+  const vals=ids.map(id=>+document.getElementById(id).value||0);
+  const nueva={
+    id:ENTREVISTAS.length?Math.max(...ENTREVISTAS.map(e=>e.id))+1:1,
+    cohorte:document.getElementById('ei-cohorte').value,
+    candidato, localidad:document.getElementById('ei-localidad').value,
+    edad:+document.getElementById('ei-edad').value||null,
+    fecha:document.getElementById('ei-fecha').value,
+    autogestion:vals[0],compromiso:vals[1],ambicion:vals[2],presentacion:vals[3],
+    comunicacion:vals[4],colchon:vals[5],red:vals[6],
+    ponderacion:+document.getElementById('ei-pond').value||null,
+    fortaleza:document.getElementById('ei-fort').value,
+    debilidad:document.getElementById('ei-deb').value,
+  };
+  ENTREVISTAS.push(nueva);
+  // Actualizar score en candidato si lo encontramos
+  const cand=DATA.find(d=>d.nombre.toLowerCase().includes(candidato.toLowerCase().split(' ')[0]));
+  if(cand){cand.score=scoreTotal(nueva);cand.fechaEntrevista=nueva.fecha;cand.estado='Entrevistado';}
+  cerrar('mo-entrevista');
+  toast(`✅ Entrevista de ${candidato} guardada`);
+  renderEntrevistas(); filtrar(); renderDash();
+  populateFiltros();
+}
+
+// ── GOOGLE SHEETS ──
+function conectarSheets(){
+  const url=document.getElementById('sheets-url').value.trim();
+  if(!url){toast('⚠️ Pegá la URL de tu planilla');return;}
+  document.getElementById('sync-dot').classList.add('syncing');
+  document.getElementById('sync-txt').textContent='Conectando…';
+  fetch(url).then(r=>r.text()).then(csv=>{
+    const lines=csv.split('\n').filter(l=>l.trim());
+    const parsed=parseCSV(lines);
+    if(parsed.length>0){
+      DATA=parsed;
+      document.getElementById('sheets-panel').style.display='none';
+      document.getElementById('sync-dot').classList.remove('syncing');
+      document.getElementById('sync-txt').textContent='Sheets conectado ✓';
+      filtrar(); renderDash(); renderKanban(); populateFiltros();
+      toast(`✅ ${parsed.length} candidatos importados desde Sheets`);
+    }
+  }).catch(()=>{
+    document.getElementById('sync-dot').classList.remove('syncing');
+    document.getElementById('sync-txt').textContent='Error de conexión';
+    toast('❌ No se pudo conectar. Verificá que la planilla sea pública y esté publicada como CSV.');
+  });
+}
+function parseCSV(lines){
+  if(lines.length<2) return [];
+  const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/[^a-záéíóúñ0-9]/gi,'_'));
+  return lines.slice(1).map((line,i)=>{
+    const vals=line.split(',');
+    return {id:i+1,nombre:vals[4]||'',fecha:vals[1]||'',fuente:vals[2]||'',cohorte:vals[3]||'',
+      telefono:vals[5]||'',estado:vals[6]||'A contactar',fechaContacto:vals[7]||'',
+      fechaEntrevista:vals[8]||'',fechaBroker:vals[9]||'',fechaIngreso:vals[10]||'',
+      motivoRechazo:vals[11]||'',score:+vals[14]||0,comentarios:vals[15]||''};
+  }).filter(c=>c.nombre.trim());
+}
+
+// ── EXPORT ──
+function exportCSV(){
+  const headers=['ID','Nombre','Fuente','Cohorte','Estado','Fecha Postulacion','Fecha Contacto','Fecha Entrevista','Fecha Broker','Fecha Ingreso','Motivo Rechazo','Score','Comentarios'];
+  const rows=filteredData.map(c=>[c.id,c.nombre,c.fuente,c.cohorte,c.estado,c.fecha,c.fechaContacto,c.fechaEntrevista,c.fechaBroker||'',c.fechaIngreso,c.motivoRechazo,c.score,`"${c.comentarios}"`].join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='candidatos_lb_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+  toast('📥 CSV exportado!');
+}
+function exportSheets(){document.getElementById('mo-sheets').classList.add('open');}
+
+// ── HELPERS ──
+function cerrar(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.mo').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');}));
+
+function populateFiltros(){
+  const cohortes=[...new Set(DATA.map(c=>c.cohorte).filter(Boolean))].sort();
+  ['dash-cohorte','k-cohorte','b-cohorte','e-cohorte'].forEach(id=>{
+    const sel=document.getElementById(id);
+    if(!sel) return;
+    const curr=sel.value;
+    sel.innerHTML=`<option value="">Todas las cohortes</option>`+cohortes.map(c=>`<option value="${c}">${c}</option>`).join('');
+    if(curr) sel.value=curr;
+  });
+  // Entrevistas cohortes
+  const ecoh=[...new Set(ENTREVISTAS.map(e=>e.cohorte).filter(Boolean))].sort();
+  const esel=document.getElementById('e-cohorte');
+  if(esel){
+    const curr=esel.value;
+    esel.innerHTML=`<option value="">Todas las cohortes</option>`+ecoh.map(c=>`<option value="${c}">${c}</option>`).join('');
+    if(curr) esel.value=curr;
+  }
+}
+
+// ── INIT ──
+populateFiltros();
+renderDash();
+filtrar();
+</script>
+</body>
+</html>
