@@ -328,6 +328,14 @@ td{padding:9px 13px;font-size:13px;vertical-align:middle}
       <div id="ch-pendientes"></div>
     </div>
   </div>
+
+  <div class="cc" style="margin-bottom:22px">
+    <div class="cc-title" style="display:flex;align-items:center;justify-content:space-between">
+      <span>🔁 Nombres Repetidos — Postulantes Múltiples</span>
+      <span id="repost-badge" style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--muted)"></span>
+    </div>
+    <div id="ch-repetidos"></div>
+  </div>
 </div>
 
 <!-- ══ KANBAN ══ -->
@@ -694,6 +702,19 @@ function renderDash(){
   const avgReacc=reacciones.length?Math.round(reacciones.reduce((a,b)=>a+b,0)/reacciones.length):null;
   const avgHiring=hirings.length?Math.round(hirings.reduce((a,b)=>a+b,0)/hirings.length):null;
 
+  // Detectar nombres repetidos (normalizado: sin espacios extra, lowercase)
+  const normalizar = n => n.trim().toLowerCase().replace(/\s+/g,' ');
+  const conteoNombres = {};
+  DATA.forEach(c => {
+    if(!c.nombre) return;
+    const key = normalizar(c.nombre);
+    if(!conteoNombres[key]) conteoNombres[key] = [];
+    conteoNombres[key].push(c);
+  });
+  const repetidos = Object.entries(conteoNombres)
+    .filter(([k,v]) => v.length > 1)
+    .sort((a,b) => b[1].length - a[1].length);
+
   document.getElementById('kpi-grid').innerHTML=`
     <div class="kpi"><div class="kpi-label">Total Candidatos</div><div class="kpi-val">${total}</div><div class="kpi-sub">histórico acumulado</div></div>
     <div class="kpi"><div class="kpi-label">En Pipeline</div><div class="kpi-val blue">${act}</div><div class="kpi-sub">sin rechazados</div></div>
@@ -701,6 +722,11 @@ function renderDash(){
     <div class="kpi"><div class="kpi-label">Ingresados</div><div class="kpi-val oro">${ing}</div><div class="kpi-sub">agentes confirmados</div></div>
     <div class="kpi"><div class="kpi-label">Tasa Conversión</div><div class="kpi-val">${tasa}%</div><div class="kpi-sub">postulado → ingresado</div></div>
     <div class="kpi"><div class="kpi-label">T. Reacción Prom.</div><div class="kpi-val${avgReacc&&avgReacc>7?' red':''}">${avgReacc!==null?avgReacc+'d':'—'}</div><div class="kpi-sub">días hasta 1° contacto</div></div>
+    <div class="kpi" style="cursor:pointer" onclick="document.getElementById('ch-repetidos').scrollIntoView({behavior:'smooth'})">
+      <div class="kpi-label">Repostulantes</div>
+      <div class="kpi-val" style="color:#f59e0b">${repetidos.length}</div>
+      <div class="kpi-sub">nombres repetidos en la BD</div>
+    </div>
   `;
 
   // Funnel
@@ -785,6 +811,62 @@ function renderDash(){
         <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#713f12">${sinScore.length}</div>
       </div>
     </div>`;
+
+  // Nombres repetidos
+  const elRep = document.getElementById('ch-repetidos');
+  const badge = document.getElementById('repost-badge');
+  if(badge) badge.textContent = repetidos.length > 0 ? `${repetidos.length} personas · ${repetidos.reduce((a,b)=>a+b[1].length,0)} registros en total` : '';
+
+  if(repetidos.length === 0){
+    elRep.innerHTML = `<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">✅ Sin nombres duplicados en la base de datos</div>`;
+  } else {
+    elRep.innerHTML = `
+      <div style="margin-bottom:10px;font-size:12px;color:var(--muted)">
+        Personas que aparecen más de una vez. Puede ser una repostulación genuina o un duplicado a revisar.
+      </div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:var(--bg2)">
+              <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border)">Nombre</th>
+              <th style="padding:8px 12px;text-align:center;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border)">Veces</th>
+              <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border)">Cohortes</th>
+              <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border)">Estados</th>
+              <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border)">Fuentes</th>
+              <th style="padding:8px 12px;border-bottom:1px solid var(--border)"></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${repetidos.map(([nombre, registros]) => {
+              const cohortes = [...new Set(registros.map(r=>r.cohorte).filter(Boolean))].join(', ') || '—';
+              const estados = [...new Set(registros.map(r=>r.estado))].join(', ');
+              const fuentes = [...new Set(registros.map(r=>r.fuente).filter(Boolean))].join(', ') || '—';
+              const tieneActivo = registros.some(r=>!['Rechazado/Baja'].includes(r.estado));
+              const color = tieneActivo ? '#f59e0b' : 'var(--muted)';
+              return `<tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background=''">
+                <td style="padding:9px 12px;font-weight:600;color:var(--text)">${registros[0].nombre}</td>
+                <td style="padding:9px 12px;text-align:center">
+                  <span style="background:${tieneActivo?'#fef3c7':'var(--bg2)'};color:${color};font-weight:700;padding:3px 10px;border-radius:20px;font-size:12px">${registros.length}x</span>
+                </td>
+                <td style="padding:9px 12px;color:var(--muted);font-size:12px">${cohortes}</td>
+                <td style="padding:9px 12px;font-size:12px">${estados}</td>
+                <td style="padding:9px 12px;color:var(--muted);font-size:12px">${fuentes}</td>
+                <td style="padding:9px 12px">
+                  <button class="btn btn-o btn-xs" onclick="buscarNombre('${registros[0].nombre.replace(/'/g,"\\'")}')">Ver todos</button>
+                </td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>`;
+  }
+}
+
+// Ir a candidatos filtrando por nombre
+function buscarNombre(nombre){
+  nav('candidatos', document.querySelectorAll('.nb')[2]);
+  document.getElementById('b-buscar').value = nombre;
+  filtrar();
 }
 
 // ── KANBAN ──
