@@ -775,20 +775,52 @@ function renderDash(){
       </div>
     </div>`;
 
-  // Costo por ingresante
-  const costoTotal=FINANZAS.reduce((a,b)=>a+(b.inversion||0),0);
-  const cpi=ing>0?(costoTotal/ing).toFixed(0):null;
+  // Costo por ingresante — filtrado por cohorte si corresponde
+  const cohorteSeleccionada = cf; // viene del filtro del dashboard
+
+  // Normalizar nombres de cohorte para matchear (AG - 032026 vs AG-032026)
+  const normCoh = s => s.replace(/\s/g,'').toUpperCase();
+
+  // Inversión: si hay cohorte seleccionada, filtrar solo esa
+  const finanzasFiltradas = cohorteSeleccionada
+    ? FINANZAS.filter(f => normCoh(f.cohorte) === normCoh(cohorteSeleccionada))
+    : FINANZAS;
+
+  const costoFiltrado = finanzasFiltradas.reduce((a,b) => a+(b.inversion||0), 0);
+  const cpi = ing > 0 ? (costoFiltrado/ing).toFixed(0) : null;
+  const labelCosto = cohorteSeleccionada ? cohorteSeleccionada : 'Todas las cohortes';
+
+  // Desglose siempre muestra todas las cohortes con inversión
+  const desglose = FINANZAS.filter(f => f.inversion > 0).map(f => {
+    const ingCohorte = DATA.filter(c => c.estado==='Ingresado' && normCoh(c.cohorte||'') === normCoh(f.cohorte)).length;
+    const cpiCohorte = ingCohorte > 0 ? Math.round(f.inversion/ingCohorte) : null;
+    const isSelected = cohorteSeleccionada && normCoh(f.cohorte) === normCoh(cohorteSeleccionada);
+    return `<div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:7px 10px;background:${isSelected?'var(--verde-xs)':'var(--bg)'};border-radius:6px;border:1px solid ${isSelected?'#a7f3d0':'transparent'}">
+      <div>
+        <div style="font-weight:600;color:${isSelected?'var(--verde-dark)':'var(--text)'}">${f.cohorte}</div>
+        <div style="color:var(--muted);font-size:11px">${ingCohorte} ingresado${ingCohorte!==1?'s':''} · ${cpiCohorte?'$'+cpiCohorte.toLocaleString('es-AR')+'/ingresante':'sin ingresos aún'}</div>
+      </div>
+      <strong style="color:${isSelected?'var(--verde-dark)':'var(--text)'}">$${f.inversion.toLocaleString('es-AR')}</strong>
+    </div>`;
+  }).join('');
+
   document.getElementById('ch-costo').innerHTML=`
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
-      <div><div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Inversión Total</div>
-        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--verde-dark)">$${costoTotal.toLocaleString('es-AR')}</div>
+      <div style="display:flex;gap:12px">
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Inversión ${cohorteSeleccionada?cohorteSeleccionada:'Total'}</div>
+          <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--verde-dark)">$${costoFiltrado.toLocaleString('es-AR')}</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Costo / Ingresante</div>
+          <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--oro-dark)">${cpi?'$'+Number(cpi).toLocaleString('es-AR'):'—'}</div>
+          <div style="font-size:11px;color:var(--muted)">${ing} ingresado${ing!==1?'s':''} · ${labelCosto}</div>
+        </div>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:10px">
-        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Costo por Ingresante</div>
-        <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--oro-dark)">${cpi?'$'+Number(cpi).toLocaleString('es-AR'):'Sin datos'}</div>
-        <div style="font-size:12px;color:var(--muted);margin-top:3px">${ing} ingresados hasta la fecha</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Desglose por Cohorte</div>
+        <div style="display:flex;flex-direction:column;gap:5px">${desglose||'<div style="color:var(--muted);font-size:12px;padding:8px">Sin datos de inversión cargados</div>'}</div>
       </div>
-      ${FINANZAS.filter(f=>f.inversion>0).map(f=>`<div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 8px;background:var(--bg);border-radius:6px"><span style="color:var(--muted)">${f.cohorte}</span><strong>$${f.inversion.toLocaleString('es-AR')}</strong></div>`).join('')}
     </div>`;
 
   // Pendientes de acción
