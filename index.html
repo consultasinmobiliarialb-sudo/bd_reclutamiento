@@ -632,9 +632,15 @@ let ENTREVISTAS = [
 ];
 
 const FINANZAS = [
-  {cohorte:'AG - 012026',inversion:38918.24},
-  {cohorte:'AG - 032026',inversion:104343.32},
-  {cohorte:'AG - 052026',inversion:0},
+  {cohorte:'AG - 012026', mes:'Diciembre', anio:2025, canal:'Meta Ads',    campania:'Lead Reclutamiento 2026', inversion:38918.24},
+  {cohorte:'AG - 012026', mes:'Diciembre', anio:2025, canal:'Linkedin',    campania:'Gratuitos',               inversion:0},
+  {cohorte:'AG - 012026', mes:'Diciembre', anio:2025, canal:'Pagina LB',   campania:'-',                       inversion:0},
+  {cohorte:'AG - 032026', mes:'Febrero',   anio:2026, canal:'Meta Ads',    campania:'Lead Reclutamiento 2026', inversion:104343.32},
+  {cohorte:'AG - 032026', mes:'Febrero',   anio:2026, canal:'Linkedin',    campania:'Gratuitos',               inversion:0},
+  {cohorte:'AG - 032026', mes:'Febrero',   anio:2026, canal:'Pagina LB',   campania:'-',                       inversion:0},
+  {cohorte:'AG - 052026', mes:'Marzo',     anio:2026, canal:'Meta Ads',    campania:'Lead Reclutamiento 2026', inversion:124100.64},
+  {cohorte:'AG - 052026', mes:'Marzo',     anio:2026, canal:'Linkedin',    campania:'Gratuitos',               inversion:0},
+  {cohorte:'AG - 052026', mes:'Abril',     anio:2026, canal:'Meta Ads',    campania:'Lead Reclutamiento 2026', inversion:49464.18},
 ];
 
 let filteredData = [...DATA];
@@ -775,34 +781,71 @@ function renderDash(){
       </div>
     </div>`;
 
-  // Costo por ingresante — filtrado por cohorte si corresponde
-  const cohorteSeleccionada = cf; // viene del filtro del dashboard
+  // Costo por ingresante — estructura real: múltiples filas por cohorte (una por canal)
+  const cohorteSeleccionada = cf;
+  const normCoh = s => (s||'').replace(/\s/g,'').toUpperCase();
 
-  // Normalizar nombres de cohorte para matchear (AG - 032026 vs AG-032026)
-  const normCoh = s => s.replace(/\s/g,'').toUpperCase();
+  // Agrupar FINANZAS por cohorte sumando todos los canales
+  const finPorCohorte = {};
+  FINANZAS.forEach(f => {
+    const key = normCoh(f.cohorte);
+    if(!key) return;
+    if(!finPorCohorte[key]) finPorCohorte[key] = { cohorte: f.cohorte, total: 0, canales: [] };
+    finPorCohorte[key].total += (f.inversion||0);
+    if(f.inversion > 0) finPorCohorte[key].canales.push({ canal: f.canal||f.fuente||'', inversion: f.inversion });
+  });
 
-  // Inversión: si hay cohorte seleccionada, filtrar solo esa
-  const finanzasFiltradas = cohorteSeleccionada
-    ? FINANZAS.filter(f => normCoh(f.cohorte) === normCoh(cohorteSeleccionada))
-    : FINANZAS;
+  // Inversión filtrada según cohorte seleccionada
+  const costoFiltrado = cohorteSeleccionada
+    ? (finPorCohorte[normCoh(cohorteSeleccionada)]?.total || 0)
+    : Object.values(finPorCohorte).reduce((a,b) => a+b.total, 0);
 
-  const costoFiltrado = finanzasFiltradas.reduce((a,b) => a+(b.inversion||0), 0);
-  const cpi = ing > 0 ? (costoFiltrado/ing).toFixed(0) : null;
-  const labelCosto = cohorteSeleccionada ? cohorteSeleccionada : 'Todas las cohortes';
+  const cpi = ing > 0 ? Math.round(costoFiltrado/ing) : null;
+  const labelCosto = cohorteSeleccionada || 'Todas las cohortes';
 
-  // Desglose siempre muestra todas las cohortes con inversión
-  const desglose = FINANZAS.filter(f => f.inversion > 0).map(f => {
-    const ingCohorte = DATA.filter(c => c.estado==='Ingresado' && normCoh(c.cohorte||'') === normCoh(f.cohorte)).length;
-    const cpiCohorte = ingCohorte > 0 ? Math.round(f.inversion/ingCohorte) : null;
-    const isSelected = cohorteSeleccionada && normCoh(f.cohorte) === normCoh(cohorteSeleccionada);
-    return `<div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:7px 10px;background:${isSelected?'var(--verde-xs)':'var(--bg)'};border-radius:6px;border:1px solid ${isSelected?'#a7f3d0':'transparent'}">
-      <div>
-        <div style="font-weight:600;color:${isSelected?'var(--verde-dark)':'var(--text)'}">${f.cohorte}</div>
-        <div style="color:var(--muted);font-size:11px">${ingCohorte} ingresado${ingCohorte!==1?'s':''} · ${cpiCohorte?'$'+cpiCohorte.toLocaleString('es-AR')+'/ingresante':'sin ingresos aún'}</div>
-      </div>
-      <strong style="color:${isSelected?'var(--verde-dark)':'var(--text)'}">$${f.inversion.toLocaleString('es-AR')}</strong>
-    </div>`;
-  }).join('');
+  // Desglose: si hay cohorte seleccionada → mostrar canales de esa cohorte
+  //           si no → mostrar resumen por cohorte
+  let desgloseHTML = '';
+
+  if(cohorteSeleccionada && finPorCohorte[normCoh(cohorteSeleccionada)]) {
+    // Vista detallada: canales de la cohorte seleccionada
+    const cohData = finPorCohorte[normCoh(cohorteSeleccionada)];
+    const ingCohorte = DATA.filter(c => c.estado==='Ingresado' && normCoh(c.cohorte||'')===normCoh(cohorteSeleccionada)).length;
+    desgloseHTML = `
+      <div style="background:var(--verde-xs);border-radius:8px;padding:10px 12px;border:1px solid #a7f3d0;margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-weight:700;color:var(--verde-dark)">${cohData.cohorte}</span>
+          <span style="font-size:11px;color:var(--muted)">${ingCohorte} ingresado${ingCohorte!==1?'s':''}</span>
+        </div>
+        ${FINANZAS.filter(f=>normCoh(f.cohorte)===normCoh(cohorteSeleccionada)).map(f=>`
+          <div style="display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,.06)">
+            <span style="color:var(--muted)">${f.canal||f.fuente||'—'} · ${f.campania||f.nombre||''}</span>
+            <strong style="color:${f.inversion>0?'var(--verde-dark)':'var(--muted)'}">${f.inversion>0?'$'+f.inversion.toLocaleString('es-AR'):'Gratuito'}</strong>
+          </div>`).join('')}
+      </div>`;
+  } else {
+    // Vista resumen: todas las cohortes
+    desgloseHTML = Object.values(finPorCohorte)
+      .sort((a,b) => b.total - a.total)
+      .map(f => {
+        const ingCoh = DATA.filter(c => c.estado==='Ingresado' && normCoh(c.cohorte||'')===normCoh(f.cohorte)).length;
+        const cpiCoh = ingCoh > 0 ? Math.round(f.total/ingCoh) : null;
+        const pct = costoFiltrado > 0 ? (f.total/costoFiltrado*100).toFixed(0) : 0;
+        return `<div style="padding:8px 10px;background:var(--bg);border-radius:6px;border:1px solid var(--border)">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+            <span style="font-weight:600;font-size:13px">${f.cohorte}</span>
+            <strong style="color:var(--verde-dark)">${f.total>0?'$'+f.total.toLocaleString('es-AR'):'$0'}</strong>
+          </div>
+          <div style="background:var(--bg2);border-radius:3px;height:4px;margin-bottom:5px;overflow:hidden">
+            <div style="height:100%;width:${pct}%;background:var(--verde);border-radius:3px"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted)">
+            <span>${ingCoh} ingresado${ingCoh!==1?'s':''}</span>
+            <span>${cpiCoh?'$'+cpiCoh.toLocaleString('es-AR')+'/ingresante':'sin ingresos aún'}</span>
+          </div>
+        </div>`;
+      }).join('') || '<div style="color:var(--muted);font-size:12px;padding:8px">Sin datos de inversión cargados</div>';
+  }
 
   document.getElementById('ch-costo').innerHTML=`
     <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
@@ -813,13 +856,15 @@ function renderDash(){
         </div>
         <div style="flex:1">
           <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Costo / Ingresante</div>
-          <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--oro-dark)">${cpi?'$'+Number(cpi).toLocaleString('es-AR'):'—'}</div>
+          <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--oro-dark)">${cpi?'$'+cpi.toLocaleString('es-AR'):'—'}</div>
           <div style="font-size:11px;color:var(--muted)">${ing} ingresado${ing!==1?'s':''} · ${labelCosto}</div>
         </div>
       </div>
       <div style="border-top:1px solid var(--border);padding-top:10px">
-        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Desglose por Cohorte</div>
-        <div style="display:flex;flex-direction:column;gap:5px">${desglose||'<div style="color:var(--muted);font-size:12px;padding:8px">Sin datos de inversión cargados</div>'}</div>
+        <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">
+          ${cohorteSeleccionada ? 'Detalle por Canal · '+cohorteSeleccionada : 'Resumen por Cohorte'}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">${desgloseHTML}</div>
       </div>
     </div>`;
 
