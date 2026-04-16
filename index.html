@@ -512,7 +512,7 @@ td{padding:9px 13px;font-size:13px;vertical-align:middle}
 <div class="mo" id="mo-entrevista">
 <div class="md">
   <div class="md-header">
-    <div><div class="md-title">Cargar Entrevista</div><div class="md-sub">Evaluación de candidato</div></div>
+    <div><div class="md-title">Cargar Entrevista</div><div class="md-sub">Nueva ponderación · Máximo 35 puntos</div></div>
     <button class="md-close" onclick="cerrar('mo-entrevista')">✕</button>
   </div>
   <div class="form-grid-3" style="margin-bottom:14px">
@@ -523,25 +523,34 @@ td{padding:9px 13px;font-size:13px;vertical-align:middle}
     <div class="fg"><label>Edad</label><input id="ei-edad" type="number" placeholder="35"></div>
   </div>
   <div style="background:var(--bg);border-radius:8px;padding:14px;margin-bottom:14px">
-    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Puntuación (1 = Bajo · 5 = Excelente)</div>
-    <div class="form-grid">
-      <div class="fg"><label>Autogestión</label><input id="ei-auto" type="number" min="1" max="5" placeholder="1-5"></div>
-      <div class="fg"><label>Compromiso</label><input id="ei-comp" type="number" min="1" max="5" placeholder="1-5"></div>
-      <div class="fg"><label>Ambición</label><input id="ei-amb" type="number" min="1" max="5" placeholder="1-5"></div>
-      <div class="fg"><label>Presentación personal</label><input id="ei-pres" type="number" min="1" max="5" placeholder="1-5"></div>
-      <div class="fg"><label>Comunicación</label><input id="ei-com" type="number" min="1" max="5" placeholder="1-5"></div>
-      <div class="fg"><label>Colchón Financiero</label><input id="ei-fin" type="number" min="1" max="5" placeholder="1-5"></div>
-      <div class="fg"><label>Red de Contactos</label><input id="ei-red" type="number" min="1" max="5" placeholder="1-5"></div>
-      <div class="fg"><label>Ponderación Personal</label><input id="ei-pond" type="number" min="1" max="5" step="0.5" placeholder="1-5"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Puntuación por criterio</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center">
+        <div class="fg" style="margin:0"><label>1. Impulso / Automotivación / Resiliencia <span style="color:var(--verde-dark)">(máx 6)</span></label><input id="ei-impulso" type="number" min="0" max="6" placeholder="0–6" oninput="calcTotal()"></div>
+      </div>
+      <div class="fg"><label>2. Capacidad de aprendizaje <span style="color:var(--verde-dark)">(máx 5)</span></label><input id="ei-aprendizaje" type="number" min="0" max="5" placeholder="0–5" oninput="calcTotal()"></div>
+      <div class="fg"><label>3. Mentalidad de prospección / Plan de generación de leads <span style="color:var(--verde-dark)">(máx 6)</span></label><input id="ei-prospeccion" type="number" min="0" max="6" placeholder="0–6" oninput="calcTotal()"></div>
+      <div class="fg"><label>4. Esfera de influencia / Base de datos <span style="color:var(--verde-dark)">(máx 5)</span></label><input id="ei-esfera" type="number" min="0" max="5" placeholder="0–5" oninput="calcTotal()"></div>
+      <div class="fg"><label>5. Disciplina de organización / Sistemas <span style="color:var(--verde-dark)">(máx 4)</span></label><input id="ei-disciplina" type="number" min="0" max="4" placeholder="0–4" oninput="calcTotal()"></div>
+      <div class="fg"><label>6. Habilidades interpersonales / Adaptación cultural <span style="color:var(--verde-dark)">(máx 4)</span></label><input id="ei-relaciones" type="number" min="0" max="4" placeholder="0–4" oninput="calcTotal()"></div>
+      <div class="fg"><label>7. Alineación tecnológica / Marketing digital <span style="color:var(--verde-dark)">(máx 3)</span></label><input id="ei-tecnologia" type="number" min="0" max="3" placeholder="0–3" oninput="calcTotal()"></div>
+      <div class="fg"><label>8. Fiabilidad en el cumplimiento / Ética <span style="color:var(--verde-dark)">(máx 2)</span></label><input id="ei-etica" type="number" min="0" max="2" placeholder="0–2" oninput="calcTotal()"></div>
+      <div class="fg" style="border-top:1px solid var(--border);padding-top:10px">
+        <label>Ponderación personal <span style="color:var(--muted)">(referencia visual · no suma al score)</span></label>
+        <input id="ei-pond" type="number" min="1" max="5" step="0.5" placeholder="1–5">
+      </div>
     </div>
   </div>
   <div class="form-grid">
     <div class="fg"><label>Fortaleza principal</label><input id="ei-fort" type="text" placeholder="Ej: Red de contactos amplia"></div>
     <div class="fg"><label>Debilidad / Punto a trabajar</label><input id="ei-deb" type="text" placeholder="Ej: Primera experiencia comercial"></div>
   </div>
-  <div style="margin-top:10px;padding:10px;background:var(--verde-xs);border-radius:7px;display:flex;align-items:center;justify-content:space-between">
-    <span style="font-size:13px;font-weight:600;color:var(--verde-dark)">Puntaje Total:</span>
-    <span id="ei-total" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--verde-dark)">—</span>
+  <div style="margin-top:12px;padding:12px 16px;border-radius:8px;display:flex;align-items:center;justify-content:space-between;border:2px solid var(--border)" id="ei-banda-box">
+    <div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">Puntaje Total</div>
+      <div id="ei-banda-label" style="font-size:12px;margin-top:2px;color:var(--muted)">—</div>
+    </div>
+    <span id="ei-total" style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--verde-dark)">—</span>
   </div>
   <div class="md-actions">
     <button class="btn btn-g" onclick="guardarEntrevista()">Guardar Evaluación</button>
@@ -621,14 +630,27 @@ let DATA = [
 ];
 
 let ENTREVISTAS = [
-  {id:1,cohorte:'AG-012026',candidato:'Jessica Castro',localidad:'Neuquén',edad:40,fecha:'2025-12-10',autogestion:3,compromiso:4,ambicion:3,presentacion:3,comunicacion:3,colchon:4,red:3,ponderacion:3,fortaleza:'Red Contactos / Entusiasmo y ganas',debilidad:'Rigidez inicial / Mercado informal, requiere ordenar procesos'},
-  {id:2,cohorte:'AG-012026',candidato:'Irma Tejeda',localidad:'Neuquén',edad:59,fecha:'2025-12-11',autogestion:2,compromiso:2,ambicion:4,presentacion:1,comunicacion:4,colchon:4,red:3,ponderacion:2,fortaleza:'Ex Remax / Mart. Publica / Exp. en el Rubro',debilidad:'Aspecto algo desalineado / Disp. para el 26/01'},
-  {id:3,cohorte:'AG-012026',candidato:'Norberto Chanampa',localidad:'Neuquén',edad:61,fecha:'2025-12-12',autogestion:4,compromiso:4,ambicion:3,presentacion:4,comunicacion:3,colchon:4,red:4,ponderacion:4,fortaleza:'Ex Profesor Jubilado / Muy amable y genuino. Disponibilidad 100%',debilidad:'Hay que trabajar la forma de comunicación'},
-  {id:4,cohorte:'AG-012026',candidato:'Nicole Griffouliera',localidad:'Neuquén',edad:29,fecha:'2025-12-12',autogestion:4,compromiso:4,ambicion:4,presentacion:5,comunicacion:5,colchon:4,red:4,ponderacion:4.5,fortaleza:'Excelente comunicación y presentación',debilidad:''},
-  {id:5,cohorte:'AG-012026',candidato:'David Figueroa',localidad:'Neuquén',edad:41,fecha:'2025-12-18',autogestion:4,compromiso:4,ambicion:3,presentacion:3,comunicacion:3,colchon:4,red:3,ponderacion:3,fortaleza:'Entiende de negocios. Venta de fondos de comercio.',debilidad:'Hay que trabajar los puntos propios del negocio.'},
-  {id:6,cohorte:'AG-032026',candidato:'Yanira Crespo',localidad:'Neuquén',edad:null,fecha:'2026-02-12',autogestion:3,compromiso:4,ambicion:4,presentacion:4,comunicacion:4,colchon:3,red:4,ponderacion:3,fortaleza:'Estudiante de Mart. Publico con ganas. Buena presencia inicial.',debilidad:'Primera experiencia comercial'},
-  {id:7,cohorte:'AG-032026',candidato:'Juan Ignacio Fernandez',localidad:'Neuquén',edad:null,fecha:'2026-02-03',autogestion:4,compromiso:4,ambicion:3,presentacion:1,comunicacion:2,colchon:4,red:2,ponderacion:2.5,fortaleza:'Total disponibilidad y compromiso.',debilidad:'Desalineado para entrevista. Requiere corregir presentación.'},
-  {id:8,cohorte:'AG-032026',candidato:'Lorena Castro',localidad:'Centenario',edad:null,fecha:'2026-02-19',autogestion:4,compromiso:3,ambicion:3,presentacion:2,comunicacion:4,colchon:3,red:4,ponderacion:3,fortaleza:'Trabaja en PSA hace 7 años. Conoce de ventas.',debilidad:'PSA sigue siendo su principal ingreso. Debe complementar negocios.'},
+  {id:1,cohorte:'AG-012026',candidato:'Jessica Castro',localidad:'Neuquén',edad:40,fecha:'2025-12-10',
+   impulso:4,aprendizaje:4,prospeccion:4,esfera:4,disciplina:3,relaciones:4,tecnologia:2,etica:2,
+   ponderacion:4,fortaleza:'Red de contactos amplia. Entusiasmo genuino.',debilidad:'Rigidez inicial. Requiere ordenar procesos.'},
+  {id:2,cohorte:'AG-012026',candidato:'Irma Tejeda',localidad:'Neuquén',edad:59,fecha:'2025-12-11',
+   impulso:3,aprendizaje:3,prospeccion:3,esfera:4,disciplina:2,relaciones:3,tecnologia:1,etica:2,
+   ponderacion:2,fortaleza:'Ex Remax. Experiencia en el rubro.',debilidad:'Aspecto desalineado. Disponibilidad postergada.'},
+  {id:3,cohorte:'AG-012026',candidato:'Norberto Chanampa',localidad:'Neuquén',edad:61,fecha:'2025-12-12',
+   impulso:5,aprendizaje:4,prospeccion:4,esfera:5,disciplina:4,relaciones:5,tecnologia:2,etica:2,
+   ponderacion:4,fortaleza:'Ex profesor jubilado. Muy amable. Disponibilidad 100%.',debilidad:'Hay que trabajar la forma de comunicación comercial.'},
+  {id:4,cohorte:'AG-012026',candidato:'Nicole Griffouliera',localidad:'Neuquén',edad:29,fecha:'2025-12-12',
+   impulso:5,aprendizaje:5,prospeccion:5,esfera:4,disciplina:4,relaciones:5,tecnologia:3,etica:2,
+   ponderacion:5,fortaleza:'Excelente comunicación y presentación.',debilidad:''},
+  {id:5,cohorte:'AG-032026',candidato:'Yanira Crespo',localidad:'Neuquén',edad:null,fecha:'2026-02-12',
+   impulso:4,aprendizaje:4,prospeccion:3,esfera:3,disciplina:3,relaciones:4,tecnologia:3,etica:2,
+   ponderacion:3,fortaleza:'Estudiante de Mart. Publico. Buena presencia.',debilidad:'Primera experiencia comercial.'},
+  {id:6,cohorte:'AG-032026',candidato:'Juan Ignacio Fernandez',localidad:'Neuquén',edad:null,fecha:'2026-02-03',
+   impulso:4,aprendizaje:3,prospeccion:3,esfera:3,disciplina:2,relaciones:2,tecnologia:2,etica:2,
+   ponderacion:2.5,fortaleza:'Total disponibilidad y compromiso.',debilidad:'Presentación personal muy descuidada.'},
+  {id:7,cohorte:'AG-032026',candidato:'Lorena Castro',localidad:'Centenario',edad:null,fecha:'2026-02-19',
+   impulso:3,aprendizaje:3,prospeccion:3,esfera:3,disciplina:3,relaciones:4,tecnologia:2,etica:2,
+   ponderacion:3,fortaleza:'7 años en PSA. Conoce ventas y relaciones.',debilidad:'PSA sigue siendo su ingreso principal.'},
 ];
 
 const FINANZAS = [
@@ -653,8 +675,22 @@ let sortField = null, sortAsc = true;
 const fmt = d => { if(!d) return '—'; const p=d.split('-'); return p.length===3?`${p[2]}/${p[1]}/${p[0]}`:d; }
 const diasDesde = d => { if(!d) return null; const diff = (new Date()-new Date(d))/86400000; return Math.round(diff); }
 const diasEntre = (a,b) => { if(!a||!b) return null; return Math.round((new Date(b)-new Date(a))/86400000); }
-const scoreTotal = e => (e.autogestion||0)+(e.compromiso||0)+(e.ambicion||0)+(e.presentacion||0)+(e.comunicacion||0)+(e.colchon||0)+(e.red||0);
-const scoreColor = s => s>=28?'#1F6C43':s>=20?'#D4AF37':s>=14?'#f59e0b':'#ef4444';
+// Nueva ponderación — 8 criterios, máximo 35
+const CRITERIOS = [
+  { key:'impulso',      label:'Impulso / Automotivación / Resiliencia',          max:6 },
+  { key:'aprendizaje',  label:'Capacidad de aprendizaje',                         max:5 },
+  { key:'prospeccion',  label:'Mentalidad de prospección / Plan de leads',        max:6 },
+  { key:'esfera',       label:'Esfera de influencia / Base de datos',             max:5 },
+  { key:'disciplina',   label:'Disciplina de organización / Sistemas',            max:4 },
+  { key:'relaciones',   label:'Habilidades interpersonales / Adaptación cultural',max:4 },
+  { key:'tecnologia',   label:'Alineación tecnológica / Marketing digital',       max:3 },
+  { key:'etica',        label:'Fiabilidad / Ética / Cumplimiento',                max:2 },
+];
+const SCORE_MAX = 35;
+const scoreTotal = e => CRITERIOS.reduce((s,c) => s+(Number(e[c.key])||0), 0);
+// Bandas: 30-35 verde / 22-29 amarillo / <22 rojo
+const scoreColor = s => s>=30?'#1F6C43':s>=22?'#D4AF37':'#ef4444';
+const scoreBanda = s => s>=30?{label:'Buena idoneidad',color:'#1F6C43',bg:'#d1fae5'}:s>=22?{label:'Viable · Necesita apoyo',color:'#92400e',bg:'#fef3c7'}:{label:'Baja probabilidad',color:'#991b1b',bg:'#fee2e2'};
 
 function fbc(f){
   if(!f) return '';
@@ -1183,99 +1219,147 @@ function guardarNuevo(){
 
 // ── ENTREVISTAS ──
 function renderEntrevistas(){
-  const cf=document.getElementById('e-cohorte').value;
-  let E=ENTREVISTAS;
-  if(cf) E=E.filter(e=>e.cohorte===cf||e.cohorte.replace(' ','')===cf.replace(' ',''));
-  E=E.sort((a,b)=>scoreTotal(b)-scoreTotal(a));
-  document.getElementById('ranking-grid').innerHTML=E.length===0
-    ?`<div class="empty"><div class="empty-icon">📋</div>No hay entrevistas cargadas para esta cohorte</div>`
-    :E.map((e,i)=>{
-      const total=scoreTotal(e);
-      const max=35;
-      const pct=(total/max*100).toFixed(0);
-      const sc=scoreColor(total);
-      const campos=[
-        {l:'Autogestión',v:e.autogestion},{l:'Compromiso',v:e.compromiso},
-        {l:'Ambición',v:e.ambicion},{l:'Presentación',v:e.presentacion},
-        {l:'Comunicación',v:e.comunicacion},{l:'Colchón Fin.',v:e.colchon},
-        {l:'Red Contactos',v:e.red},
-      ];
-      return `<div class="rcard">
-        <div class="rcard-header">
-          <div>
-            <div style="font-size:11px;color:var(--muted);font-weight:700;margin-bottom:3px">#${i+1} · ${e.cohorte}</div>
-            <div class="rcard-name">${e.candidato}</div>
-            <div class="rcard-meta">${e.localidad||''}${e.edad?' · '+e.edad+' años':''} · ${fmt(e.fecha)}</div>
-          </div>
-          <div style="text-align:center">
-            <div class="score-circle" style="background:${sc}">${total}</div>
-            <div style="font-size:10px;color:var(--muted);margin-top:3px">de 35</div>
-          </div>
+  const cf = document.getElementById('e-cohorte').value;
+  let E = ENTREVISTAS;
+  if(cf) E = E.filter(e => e.cohorte===cf || e.cohorte.replace(/\s/g,'')===cf.replace(/\s/g,''));
+  E = E.sort((a,b) => scoreTotal(b)-scoreTotal(a));
+
+  // Separar por bandas para mostrar línea de corte
+  const aptos    = E.filter(e => scoreTotal(e) >= 30);
+  const viables  = E.filter(e => scoreTotal(e) >= 22 && scoreTotal(e) < 30);
+  const bajos    = E.filter(e => scoreTotal(e) < 22);
+
+  const renderCard = (e, pos) => {
+    const total = scoreTotal(e);
+    const banda = scoreBanda(total);
+    const pct = (total/SCORE_MAX*100).toFixed(0);
+
+    const barras = CRITERIOS.map(c => {
+      const val = Number(e[c.key]) || 0;
+      const pctCrit = (val/c.max*100).toFixed(0);
+      const color = val >= c.max ? '#1F6C43' : val >= c.max*0.6 ? '#D4AF37' : '#ef4444';
+      return `<div style="margin-bottom:7px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+          <span style="font-size:11px;color:var(--muted);flex:1">${c.label}</span>
+          <span style="font-size:11px;font-weight:700;color:${color};margin-left:8px;white-space:nowrap">${val}/${c.max}</span>
         </div>
-        <div class="rcard-body">
-          <div style="background:var(--bg2);border-radius:6px;height:6px;margin-bottom:12px;overflow:hidden">
-            <div style="height:100%;width:${pct}%;background:${sc};border-radius:6px;transition:width .8s ease"></div>
-          </div>
-          <div class="score-bars">
-            ${campos.map(c=>`<div class="sb-row">
-              <div class="sb-lbl">${c.l}</div>
-              <div class="sb-dots">${[1,2,3,4,5].map(n=>`<div class="dot${n<=(c.v||0)?' filled':''}"></div>`).join('')}</div>
-            </div>`).join('')}
-            ${e.ponderacion?`<div class="sb-row"><div class="sb-lbl" style="color:var(--oro-dark);font-weight:700">Ponderación</div><div class="sb-dots">${[1,2,3,4,5].map(n=>`<div class="dot${n<=Math.round(e.ponderacion||0)?' filled':''}"></div>`).join('')}</div></div>`:''}
-          </div>
-        </div>
-        <div class="rcard-footer">
-          ${e.fortaleza?`<div class="rf-item"><div class="rf-label">✅ Fortaleza</div><div class="rf-val">${e.fortaleza}</div></div>`:'<div></div>'}
-          ${e.debilidad?`<div class="rf-item"><div class="rf-label">⚠️ A trabajar</div><div class="rf-val">${e.debilidad}</div></div>`:'<div></div>'}
+        <div style="background:var(--bg2);border-radius:3px;height:5px;overflow:hidden">
+          <div style="height:100%;width:${pctCrit}%;background:${color};border-radius:3px;transition:width .8s ease"></div>
         </div>
       </div>`;
     }).join('');
+
+    return `<div class="rcard">
+      <div class="rcard-header">
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-bottom:3px">#${pos} · ${e.cohorte}${e.localidad?' · '+e.localidad:''}${e.edad?' · '+e.edad+' años':''}</div>
+          <div class="rcard-name">${e.candidato}</div>
+          <div style="margin-top:6px">
+            <span style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;background:${banda.bg};color:${banda.color}">${banda.label}</span>
+          </div>
+        </div>
+        <div style="text-align:center;margin-left:14px;flex-shrink:0">
+          <div style="width:54px;height:54px;border-radius:50%;background:${banda.color};display:flex;align-items:center;justify-content:center;flex-direction:column;color:white">
+            <span style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;line-height:1">${total}</span>
+            <span style="font-size:9px;opacity:.8">de ${SCORE_MAX}</span>
+          </div>
+          ${e.ponderacion?`<div style="margin-top:5px;font-size:10px;color:var(--muted)">Pond.</div>
+          <div style="font-size:13px;font-weight:700;color:var(--oro-dark)">${e.ponderacion}</div>`:''}
+        </div>
+      </div>
+
+      <div style="padding:12px 16px">
+        <div style="background:var(--bg2);border-radius:4px;height:6px;margin-bottom:12px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${banda.color};border-radius:4px;transition:width .9s ease"></div>
+        </div>
+        ${barras}
+      </div>
+
+      ${(e.fortaleza||e.debilidad)?`<div class="rcard-footer">
+        ${e.fortaleza?`<div class="rf-item"><div class="rf-label">✅ Fortaleza</div><div class="rf-val">${e.fortaleza}</div></div>`:'<div></div>'}
+        ${e.debilidad?`<div class="rf-item"><div class="rf-label">⚠️ A trabajar</div><div class="rf-val">${e.debilidad}</div></div>`:'<div></div>'}
+      </div>`:''}
+    </div>`;
+  };
+
+  const renderSeccion = (lista, titulo, color, bg, desde) => {
+    if(lista.length === 0) return '';
+    return `
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:12px;margin:8px 0 4px">
+        <div style="height:2px;flex:1;background:${color};opacity:.3;border-radius:2px"></div>
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:4px 14px;border-radius:20px;background:${bg};color:${color}">${titulo} · ${lista.length} candidato${lista.length!==1?'s':''}</span>
+        <div style="height:2px;flex:1;background:${color};opacity:.3;border-radius:2px"></div>
+      </div>
+      ${lista.map((e,i) => renderCard(e, desde+i)).join('')}`;
+  };
+
+  if(E.length === 0){
+    document.getElementById('ranking-grid').innerHTML = `<div class="empty"><div class="empty-icon">📋</div>No hay entrevistas cargadas para esta cohorte</div>`;
+    return;
+  }
+
+  document.getElementById('ranking-grid').innerHTML =
+    renderSeccion(aptos,   '🟢 Buena idoneidad · 30–35',          '#1F6C43', '#d1fae5', 1) +
+    renderSeccion(viables, '🟡 Viable · Necesita apoyo · 22–29',   '#92400e', '#fef3c7', aptos.length+1) +
+    renderSeccion(bajos,   '🔴 Baja probabilidad · menos de 22',   '#991b1b', '#fee2e2', aptos.length+viables.length+1);
 }
 
 function abrirNuevaEntrevista(){
   document.getElementById('ei-fecha').value=new Date().toISOString().split('T')[0];
   document.getElementById('ei-cohorte').value=cohorteActual();
-  ['ei-candidato','ei-localidad','ei-edad','ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red','ei-pond','ei-fort','ei-deb'].forEach(id=>document.getElementById(id).value='');
+  ['ei-candidato','ei-localidad','ei-edad','ei-impulso','ei-aprendizaje','ei-prospeccion',
+   'ei-esfera','ei-disciplina','ei-relaciones','ei-tecnologia','ei-etica','ei-pond','ei-fort','ei-deb']
+    .forEach(id=>document.getElementById(id).value='');
   document.getElementById('ei-total').textContent='—';
+  document.getElementById('ei-banda-label').textContent='—';
+  document.getElementById('ei-banda-box').style.borderColor='var(--border)';
   document.getElementById('mo-entrevista').classList.add('open');
-  // Calcular total en tiempo real
-  ['ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red'].forEach(id=>{
-    document.getElementById(id).addEventListener('input',calcTotal);
-  });
 }
+
 function calcTotal(){
-  const ids=['ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red'];
-  const total=ids.reduce((s,id)=>s+(+document.getElementById(id).value||0),0);
+  const keys=['ei-impulso','ei-aprendizaje','ei-prospeccion','ei-esfera','ei-disciplina','ei-relaciones','ei-tecnologia','ei-etica'];
+  const total=keys.reduce((s,id)=>s+(+document.getElementById(id).value||0),0);
+  const banda=scoreBanda(total);
   const el=document.getElementById('ei-total');
-  el.textContent=total+' / 35';
-  el.style.color=scoreColor(total);
+  const bl=document.getElementById('ei-banda-label');
+  const bx=document.getElementById('ei-banda-box');
+  el.textContent=total+' / '+SCORE_MAX;
+  el.style.color=banda.color;
+  bl.textContent=banda.label;
+  bl.style.color=banda.color;
+  bx.style.borderColor=banda.color;
+  bx.style.background=banda.bg;
 }
+
 function guardarEntrevista(){
   const candidato=document.getElementById('ei-candidato').value.trim();
   if(!candidato){toast('⚠️ Ingresá el nombre del candidato');return;}
-  const ids=['ei-auto','ei-comp','ei-amb','ei-pres','ei-com','ei-fin','ei-red'];
-  const vals=ids.map(id=>+document.getElementById(id).value||0);
   const nueva={
     id:ENTREVISTAS.length?Math.max(...ENTREVISTAS.map(e=>e.id))+1:1,
     cohorte:document.getElementById('ei-cohorte').value,
     candidato, localidad:document.getElementById('ei-localidad').value,
     edad:+document.getElementById('ei-edad').value||null,
     fecha:document.getElementById('ei-fecha').value,
-    autogestion:vals[0],compromiso:vals[1],ambicion:vals[2],presentacion:vals[3],
-    comunicacion:vals[4],colchon:vals[5],red:vals[6],
+    impulso:+document.getElementById('ei-impulso').value||0,
+    aprendizaje:+document.getElementById('ei-aprendizaje').value||0,
+    prospeccion:+document.getElementById('ei-prospeccion').value||0,
+    esfera:+document.getElementById('ei-esfera').value||0,
+    disciplina:+document.getElementById('ei-disciplina').value||0,
+    relaciones:+document.getElementById('ei-relaciones').value||0,
+    tecnologia:+document.getElementById('ei-tecnologia').value||0,
+    etica:+document.getElementById('ei-etica').value||0,
     ponderacion:+document.getElementById('ei-pond').value||null,
     fortaleza:document.getElementById('ei-fort').value,
     debilidad:document.getElementById('ei-deb').value,
   };
   ENTREVISTAS.push(nueva);
   pushEntrevista(nueva);
-  // Actualizar score en candidato si lo encontramos
+  const st=scoreTotal(nueva);
   const cand=DATA.find(d=>d.nombre.toLowerCase().includes(candidato.toLowerCase().split(' ')[0]));
-  if(cand){cand.score=scoreTotal(nueva);cand.fechaEntrevista=nueva.fecha;cand.estado='Entrevistado';}
+  if(cand){cand.score=st;cand.fechaEntrevista=nueva.fecha;cand.estado='Entrevistado';}
   cerrar('mo-entrevista');
-  toast(`✅ Entrevista de ${candidato} guardada`);
-  renderEntrevistas(); filtrar(); renderDash();
-  populateFiltros();
+  toast(`✅ Entrevista de ${candidato} guardada · Score: ${st}/${SCORE_MAX}`);
+  renderEntrevistas(); filtrar(); renderDash(); populateFiltros();
 }
 
 // GOOGLE APPS SCRIPT — SINCRONIZACIÓN VIA GET (sin CORS)
