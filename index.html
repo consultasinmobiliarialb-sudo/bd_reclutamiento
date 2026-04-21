@@ -653,7 +653,7 @@ let ENTREVISTAS = [
    ponderacion:3,fortaleza:'7 años en PSA. Conoce ventas y relaciones.',debilidad:'PSA sigue siendo su ingreso principal.'},
 ];
 
-const FINANZAS = [
+let FINANZAS = [
   {cohorte:'AG - 012026', mes:'Diciembre', anio:2025, canal:'Meta Ads',    campania:'Lead Reclutamiento 2026', inversion:38918.24},
   {cohorte:'AG - 012026', mes:'Diciembre', anio:2025, canal:'Linkedin',    campania:'Gratuitos',               inversion:0},
   {cohorte:'AG - 012026', mes:'Diciembre', anio:2025, canal:'Pagina LB',   campania:'-',                       inversion:0},
@@ -1437,6 +1437,7 @@ async function conectarScript(){
     const {candidatos,entrevistas,finanzas}=json.data;
     if(candidatos&&candidatos.length>0) DATA=candidatos;
     if(entrevistas&&entrevistas.length>0) ENTREVISTAS=entrevistas;
+    if(finanzas&&finanzas.length>0) FINANZAS.splice(0,FINANZAS.length,...finanzas);
     setSyncDot('ok');
     setSyncStatus(`✓ ${DATA.length} candidatos · ${ENTREVISTAS.length} entrevistas · ${new Date().toLocaleTimeString('es-AR')}`,'#16a34a');
     document.getElementById('btn-sync').style.display='inline-block';
@@ -1463,6 +1464,7 @@ async function sincronizarAhora(silencioso=false){
     if(!json.ok) throw new Error(json.error);
     if(json.data.candidatos?.length) DATA=json.data.candidatos;
     if(json.data.entrevistas?.length) ENTREVISTAS=json.data.entrevistas;
+    if(json.data.finanzas?.length) FINANZAS.splice(0,FINANZAS.length,...json.data.finanzas);
     setSyncDot('ok');
     setSyncStatus(`✓ ${DATA.length} candidatos · ${new Date().toLocaleTimeString('es-AR')}`,'#16a34a');
     if(!silencioso) toast(`✅ ${DATA.length} candidatos sincronizados desde Sheets`);
@@ -1517,6 +1519,7 @@ window.addEventListener('load', async () => {
     if (!json.ok) throw new Error(json.error);
     if (json.data.candidatos?.length) DATA = json.data.candidatos;
     if (json.data.entrevistas?.length) ENTREVISTAS = json.data.entrevistas;
+    if (json.data.finanzas?.length) FINANZAS.splice(0, FINANZAS.length, ...json.data.finanzas);
     setSyncDot('ok');
     setSyncStatus(`✓ ${DATA.length} candidatos · ${new Date().toLocaleTimeString('es-AR')}`, '#16a34a');
     filtrar(); renderDash(); renderKanban(); renderEntrevistas(); populateFiltros();
