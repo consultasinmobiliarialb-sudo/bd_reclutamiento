@@ -97,6 +97,7 @@ header{background:var(--verde-dark);padding:0 28px;height:58px;display:flex;alig
 .col-br{border-top:3px solid var(--oro)}.col-br .kcol-title{color:var(--oro-dark)}
 .col-pi{border-top:3px solid #10b981}.col-pi .kcol-title{color:#065f46}
 .col-in{border-top:3px solid var(--verde)}.col-in .kcol-title{color:var(--verde-dark)}
+.col-ib{border-top:3px solid #ea580c}.col-ib .kcol-title{color:#7c2d12}
 
 /* fuente badges */
 .fb{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:700;margin-top:5px}
@@ -127,6 +128,7 @@ td{padding:9px 13px;font-size:13px;vertical-align:middle}
 .pill-br{background:#fef9c3;color:#713f12}
 .pill-pi{background:#ccfbf1;color:#134e4a}
 .pill-in{background:#d1fae5;color:#065f46}
+.pill-ib{background:#fde8d8;color:#7c2d12}
 .pill-re{background:#fee2e2;color:#991b1b}
 
 /* ── CHARTS ── */
@@ -311,7 +313,7 @@ td{padding:9px 13px;font-size:13px;vertical-align:middle}
     <div class="cc"><div class="cc-title">Embudo de Conversión</div><div class="funnel" id="ch-funnel"></div></div>
     <div class="cc"><div class="cc-title">Origen de Candidatos</div><div class="bar-chart" id="ch-fuentes"></div></div>
     <div class="cc"><div class="cc-title">Motivos de Baja / Rechazo</div><div class="bar-chart" id="ch-motivos"></div></div>
-    <div class="cc"><div class="cc-title">Candidatos por Cohorte</div><div class="bar-chart" id="ch-cohortes"></div></div>
+    <div class="cc"><div class="cc-title">Origen de Ingresados 🏆</div><div class="bar-chart" id="ch-origen-ing"></div></div>
   </div>
 
   <div class="charts-grid-3">
@@ -369,7 +371,7 @@ td{padding:9px 13px;font-size:13px;vertical-align:middle}
       <option value="">Todos los estados</option>
       <option>A contactar</option><option>En proceso</option><option>Entrevistado</option>
       <option>Aprobado para Broker</option><option>Próximo Ingreso</option>
-      <option>Ingresado</option><option>Rechazado/Baja</option>
+      <option>Ingresado</option><option>Ingresado/Baja</option><option>Rechazado/Baja</option>
     </select>
     <select class="fsel" id="b-fuente" onchange="filtrar()">
       <option value="">Todas las fuentes</option>
@@ -459,7 +461,7 @@ td{padding:9px 13px;font-size:13px;vertical-align:middle}
         <select id="e-estado" onchange="mostrarCamposEstado()">
           <option>A contactar</option><option>En proceso</option><option>Entrevistado</option>
           <option>Aprobado para Broker</option><option>Próximo Ingreso</option>
-          <option>Ingresado</option><option>Rechazado/Baja</option>
+          <option>Ingresado</option><option>Ingresado/Baja</option><option>Rechazado/Baja</option>
         </select>
       </div>
       <div class="fg"><label>Score</label><input id="e-score" type="number" min="0" max="35"></div>
@@ -701,7 +703,7 @@ function fbc(f){
   return 'fb-esp';
 }
 function pill(e){
-  const m={'A contactar':'pill-ac','En proceso':'pill-ep','Entrevistado':'pill-en','Aprobado para Broker':'pill-br','Próximo Ingreso':'pill-pi','Ingresado':'pill-in','Rechazado/Baja':'pill-re'};
+  const m={'A contactar':'pill-ac','En proceso':'pill-ep','Entrevistado':'pill-en','Aprobado para Broker':'pill-br','Próximo Ingreso':'pill-pi','Ingresado':'pill-in','Ingresado/Baja':'pill-ib','Rechazado/Baja':'pill-re'};
   return `<span class="pill ${m[e]||''}">${e}</span>`;
 }
 function diasPill(n,size=''){
@@ -734,7 +736,8 @@ function renderDash(){
   const ff=document.getElementById('dash-fuente').value;
   let D=DATA.filter(c=>(!cf||c.cohorte===cf)&&(!ff||c.fuente===ff));
   const total=D.length, ing=D.filter(c=>c.estado==='Ingresado').length,
-    act=D.filter(c=>!['Rechazado/Baja','Ingresado'].includes(c.estado)).length,
+    ingBaja=D.filter(c=>c.estado==='Ingresado/Baja').length,
+    act=D.filter(c=>!['Rechazado/Baja','Ingresado','Ingresado/Baja'].includes(c.estado)).length,
     ent=D.filter(c=>c.fechaEntrevista).length,
     tasa=total?((ing/total)*100).toFixed(1):0;
 
@@ -761,7 +764,11 @@ function renderDash(){
     <div class="kpi"><div class="kpi-label">Total Candidatos</div><div class="kpi-val">${total}</div><div class="kpi-sub">histórico acumulado</div></div>
     <div class="kpi"><div class="kpi-label">En Pipeline</div><div class="kpi-val blue">${act}</div><div class="kpi-sub">sin rechazados</div></div>
     <div class="kpi"><div class="kpi-label">Entrevistados</div><div class="kpi-val">${ent}</div><div class="kpi-sub">pasaron entrevista</div></div>
-    <div class="kpi"><div class="kpi-label">Ingresados</div><div class="kpi-val oro">${ing}</div><div class="kpi-sub">agentes confirmados</div></div>
+    <div class="kpi"><div class="kpi-label">Ingresados</div><div class="kpi-val oro">${ing}</div><div class="kpi-sub">agentes activos</div></div>
+    <div class="kpi" style="cursor:pointer" onclick="document.getElementById('b-estado').value='Ingresado/Baja';nav('candidatos',document.querySelectorAll('.nb')[2]);filtrar()">
+      <div class="kpi-label">Ingresado/Baja</div><div class="kpi-val" style="color:#ea580c">${ingBaja}</div>
+      <div class="kpi-sub">ingresaron pero se bajaron</div>
+    </div>
     <div class="kpi"><div class="kpi-label">Tasa Conversión</div><div class="kpi-val">${tasa}%</div><div class="kpi-sub">postulado → ingresado</div></div>
     <div class="kpi"><div class="kpi-label">T. Reacción Prom.</div><div class="kpi-val${avgReacc&&avgReacc>7?' red':''}">${avgReacc!==null?avgReacc+'d':'—'}</div><div class="kpi-sub">días hasta 1° contacto</div></div>
     <div class="kpi" style="cursor:pointer" onclick="document.getElementById('ch-repetidos').scrollIntoView({behavior:'smooth'})">
@@ -774,8 +781,9 @@ function renderDash(){
   // Funnel
   const fsteps=[
     {l:'Postulados',n:total,c:'#6366f1'},{l:'1° Contacto',n:D.filter(c=>c.fechaContacto).length,c:'#3b82f6'},
-    {l:'Entrevistados',n:ent,c:'#f59e0b'},{l:'Aprobados Broker',n:D.filter(c=>['Aprobado para Broker','Próximo Ingreso','Ingresado'].includes(c.estado)).length,c:'#D4AF37'},
+    {l:'Entrevistados',n:ent,c:'#f59e0b'},{l:'Aprobados Broker',n:D.filter(c=>['Aprobado para Broker','Próximo Ingreso','Ingresado','Ingresado/Baja'].includes(c.estado)).length,c:'#D4AF37'},
     {l:'Ingresados',n:ing,c:'#1F6C43'},
+    {l:'Ingresado/Baja',n:ingBaja,c:'#ea580c'},
   ];
   document.getElementById('ch-funnel').innerHTML=fsteps.map((s,i)=>{
     const pct=i===0?100:(s.n/total*100).toFixed(1);
@@ -797,11 +805,20 @@ function renderDash(){
   document.getElementById('ch-motivos').innerHTML=Object.entries(motivos).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`
     <div class="bar-row"><div class="bar-lbl">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/mMax*100).toFixed(0)}%;background:${mColors[i%5]}">${v}</div></div><div class="bar-n">${v}</div></div>`).join('');
 
-  // Cohortes
-  const cohortes={};D.forEach(c=>{if(c.cohorte)cohortes[c.cohorte]=(cohortes[c.cohorte]||0)+1;});
-  const cMax=Math.max(...Object.values(cohortes));
-  document.getElementById('ch-cohortes').innerHTML=Object.entries(cohortes).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`
-    <div class="bar-row"><div class="bar-lbl">${k}</div><div class="bar-track"><div class="bar-fill" style="width:${(v/cMax*100).toFixed(0)}%;background:#1F6C43">${v}</div></div><div class="bar-n">${v}</div></div>`).join('');
+  // Origen de ingresados (Meta, Linkedin, etc.)
+  const ingresados = D.filter(c => c.estado === 'Ingresado');
+  const origenIng = {};
+  ingresados.forEach(c => { origenIng[c.fuente||'Sin fuente'] = (origenIng[c.fuente||'Sin fuente']||0)+1; });
+  const oMax = Math.max(...Object.values(origenIng), 1);
+  const oColors = ['#1F6C43','#D4AF37','#3b82f6','#8b5cf6','#f59e0b'];
+  document.getElementById('ch-origen-ing').innerHTML = ingresados.length === 0
+    ? '<div style="color:var(--muted);font-size:13px;padding:16px 0">Sin ingresados aún en este filtro</div>'
+    : Object.entries(origenIng).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`
+      <div class="bar-row">
+        <div class="bar-lbl">${k}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(v/oMax*100).toFixed(0)}%;background:${oColors[i%5]}">${v}</div></div>
+        <div class="bar-n">${(v/ingresados.length*100).toFixed(0)}%</div>
+      </div>`).join('');
 
   // Tiempos
   document.getElementById('ch-tiempos').innerHTML=`
@@ -987,6 +1004,7 @@ const KCOLS=[
   {k:'A contactar',l:'A Contactar',css:'col-ac'},{k:'En proceso',l:'En Proceso',css:'col-ep'},
   {k:'Entrevistado',l:'Entrevistado',css:'col-en'},{k:'Aprobado para Broker',l:'Aprobado Broker',css:'col-br'},
   {k:'Próximo Ingreso',l:'Próximo Ingreso',css:'col-pi'},{k:'Ingresado',l:'Ingresado ✓',css:'col-in'},
+  {k:'Ingresado/Baja',l:'Ingresado/Baja',css:'col-ib'},
 ];
 function renderKanban(){
   const cf=document.getElementById('k-cohorte').value;
