@@ -3,116 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LandrianiBlenkmann · Performance Marketing & Recruitment</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<title>LB · Business Intelligence Reclutamiento</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --verde:#1F6C43; --verde-dark:#155232; --oro:#D4AF37; --oro-dark:#b8960f;
-  --bg:#f8f9fa; --surface:#ffffff; --text:#1a1a1a; --muted:#6c757d; --border:#e9ecef;
+  --bg:#f4f7f6; --surface:#ffffff; --text:#1a1a1a; --muted:#6c757d; --border:#dee2e6;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);padding-bottom:50px}
 
-header{background:var(--verde-dark);color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+/* HEADER & NAV */
+header{background:var(--verde-dark);color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000}
 .logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
 .logo span{color:var(--oro)}
+.nav-tabs{display:flex;background:white;padding:10px 30px;gap:20px;border-bottom:1px solid var(--border);position:sticky;top:56px;z-index:999}
+.tab{cursor:pointer;padding:10px 20px;border-radius:8px;font-weight:500;color:var(--muted);transition:0.3s;display:flex;align-items:center;gap:8px}
+.tab.active{background:#e8f5ee;color:var(--verde)}
 
-.nav-tabs{display:flex;background:white;padding:10px 30px;gap:20px;border-bottom:1px solid var(--border)}
-.tab{cursor:pointer;padding:8px 16px;border-radius:6px;font-weight:500;color:var(--muted);transition:0.3s}
-.tab.active{background:var(--verde-xs);color:var(--verde);background:#e8f5ee}
+.container{max-width:1600px;margin:30px auto;padding:0 25px}
 
-.container{max-width:1400px;margin:30px auto;padding:0 20px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;margin-bottom:30px}
+/* KPIs */
+.grid-kpi{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;margin-bottom:30px}
+.kpi-card{background:white;padding:25px;border-radius:15px;border:1px solid var(--border);border-top:5px solid var(--verde);box-shadow:0 4px 6px rgba(0,0,0,0.02)}
+.kpi-val{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--verde-dark);margin:10px 0}
+.kpi-label{font-size:12px;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);font-weight:700}
 
-.card{background:white;padding:25px;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,.02)}
-.card-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:20px;color:var(--verde-dark)}
+/* LAYOUT */
+.main-layout{display:grid;grid-template-columns: 1.3fr 1fr; gap:30px}
+.card{background:white;padding:30px;border-radius:15px;border:1px solid var(--border);margin-bottom:30px;box-shadow:0 4px 6px rgba(0,0,0,0.02)}
+.card-header{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:25px;color:var(--verde-dark);border-bottom:2px solid var(--bg);padding-bottom:15px;display:flex;justify-content:space-between}
 
-.kpi-val{font-size:32px;font-weight:700;color:var(--verde);font-family:'Playfair Display',serif}
-.kpi-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:5px}
+/* BARS GRAPH */
+.bar-container{margin-bottom:15px}
+.bar-info{display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px;font-weight:500}
+.bar-track{background:#e9ecef;height:14px;border-radius:10px;overflow:hidden}
+.bar-fill{height:100%;background:var(--verde);border-radius:10px;transition:width 1s cubic-bezier(0.17, 0.67, 0.83, 0.67)}
 
-.funnel-item{margin-bottom:10px;display:flex;flex-direction:column;align-items:center}
-.stage{padding:12px;color:white;border-radius:6px;display:flex;justify-content:space-between;width:100%;font-weight:600;font-size:13px}
-.conv-label{font-size:11px;color:var(--verde);font-weight:700;margin:4px 0}
+/* FUNNEL */
+.funnel-stage{margin-bottom:12px;display:flex;flex-direction:column;align-items:center}
+.stage-pill{padding:12px 20px;color:white;border-radius:10px;display:flex;justify-content:space-between;width:100%;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+.conv-tag{font-size:11px;color:var(--verde);font-weight:800;padding:6px 0;text-transform:uppercase}
 
-.tag{padding:4px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
-.tag-meta{background:#e3f2fd;color:#0d47a1}
+/* RANKING */
+.rank-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(340px, 1fr));gap:25px}
+.rank-card{border-left:8px solid var(--oro);position:relative;overflow:hidden}
+.rank-score{position:absolute;top:20px;right:25px;font-size:28px;font-family:'Playfair Display',serif;font-weight:700;color:var(--verde)}
 
-table{width:100%;border-collapse:collapse}
-th{text-align:left;padding:12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--border)}
-td{padding:12px;border-bottom:1px solid var(--border);font-size:14px}
-
-.sync-status{display:flex;align-items:center;gap:8px;font-size:11px}
-.dot{width:8px;height:8px;border-radius:50%;background:#4ade80}
-.dot.loading{animation:blink 1s infinite;background:var(--oro)}
-@keyframes blink{50%{opacity:0.2}}
+/* SYNC DOT */
+.sync-ui{display:flex;align-items:center;gap:10px;font-size:12px}
+.dot{width:10px;height:10px;border-radius:50%;background:#4ade80}
+.dot.syncing{animation:pulse 1s infinite;background:var(--oro)}
+@keyframes pulse{50%{opacity:0.3}}
 </style>
 </head>
 <body>
 
 <header>
   <div class="logo">Landriani<span>Blenkmann</span></div>
-  <div class="sync-status">
-    <div id="dot" class="dot"></div>
-    <span id="status-text">Conectado</span>
+  <div class="sync-ui">
+    <div id="sync-dot" class="dot"></div>
+    <span id="sync-msg">Iniciando...</span>
   </div>
 </header>
 
 <div class="nav-tabs">
-  <div class="tab active" onclick="switchView('dash', this)">📊 Dashboard</div>
-  <div class="tab" onclick="switchView('cands', this)">👥 Candidatos</div>
-  <div class="tab" onclick="switchView('rank', this)">🏆 Ranking</div>
+  <div class="tab active" onclick="switchTab('dash', this)">📊 Performance Real</div>
+  <div class="tab" onclick="switchTab('cands', this)">👥 Base de Datos</div>
+  <div class="tab" onclick="switchTab('rank', this)">🏆 Ranking de Talento</div>
 </div>
 
 <div class="container">
   
-  <div style="margin-bottom:20px">
-    <select id="sel-cohorte" onchange="renderAll()" style="padding:10px;border-radius:6px;border:1px solid var(--border)">
+  <div style="margin-bottom:30px">
+    <label style="font-size:12px; font-weight:700; color:var(--muted); display:block; margin-bottom:8px">FILTRAR POR COHORTE</label>
+    <select id="filter-cohorte" onchange="renderAll()" style="padding:15px; border-radius:10px; border:1px solid var(--border); width:300px; font-size:15px; font-weight:500; background:white; cursor:pointer">
       <option value="">Todas las Cohortes</option>
     </select>
   </div>
 
-  <!-- DASHBOARD VIEW -->
-  <div id="v-dash" class="view">
-    <div class="grid" id="kpi-box"></div>
+  <!-- DASHBOARD -->
+  <div id="view-dash" class="view">
+    <div class="grid-kpi" id="kpi-box"></div>
     
-    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:20px">
+    <div class="main-layout">
+      <!-- Funnel -->
       <div class="card">
-        <div class="card-title">Embudo de Conversión (Marketing → Ingreso)</div>
+        <div class="card-header">Embudo de Conversión (Full Funnel)</div>
         <div id="funnel-box"></div>
       </div>
-      <div class="card">
-        <div class="card-title">Eficiencia de Adquisición</div>
-        <div id="eff-box"></div>
+
+      <!-- Distribuciones -->
+      <div>
+        <div class="card">
+          <div class="card-header">Candidatos por Fuente</div>
+          <div id="source-chart"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">Motivos de Rechazo</div>
+          <div id="reject-chart"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- CANDIDATOS VIEW -->
-  <div id="v-cands" class="view" style="display:none">
+  <!-- CANDIDATOS -->
+  <div id="view-cands" class="view" style="display:none">
     <div class="card">
-      <table>
-        <thead>
-          <tr><th>Nombre</th><th>Cohorte</th><th>Fuente</th><th>Estado</th><th>Score</th></tr>
-        </thead>
-        <tbody id="table-body"></tbody>
-      </table>
+      <div class="card-header">Listado Maestro de Candidatos</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%; border-collapse:collapse">
+          <thead>
+            <tr style="background:var(--bg)">
+              <th style="padding:15px; text-align:left">Nombre</th>
+              <th>Fuente</th><th>Cohorte</th><th>Estado</th><th>WA</th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- RANKING VIEW -->
-  <div id="v-rank" class="view" style="display:none">
-    <div class="grid" id="ranking-grid"></div>
+  <!-- RANKING -->
+  <div id="view-rank" class="view" style="display:none">
+    <div class="rank-grid" id="ranking-box"></div>
   </div>
 
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIocsnWXZkuUXRuM7xZFAVnIY-oDQj3fzOv4tvWUfqLtH_WIJOL9zDpfxRPB8y8smBRQ/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvkQN5HFkfDY0pQ7lD9LJ-kQxR2bjMc6P5it8sDtL0J8Nr-kgwBp_PcdHSNyVsEzn__w/exec";
 let STORE = { candidatos:[], entrevistas:[], finanzas:[], impresiones:[] };
 
 async function sync() {
-  document.getElementById('dot').classList.add('loading');
-  document.getElementById('status-text').textContent = "Sincronizando...";
+  const dot = document.getElementById('sync-dot');
+  const msg = document.getElementById('sync-msg');
+  dot.classList.add('syncing');
+  msg.textContent = "Sincronizando...";
 
   const cb = 'jsonp_' + Math.round(Math.random()*1000000);
   const s = document.createElement('script');
@@ -120,93 +148,104 @@ async function sync() {
   
   window[cb] = (res) => {
     STORE = res.data;
-    if(document.getElementById('sel-cohorte').options.length <= 1) populateFilter();
+    if(document.getElementById('filter-cohorte').options.length <= 1) {
+      const coh = [...new Set(STORE.candidatos.map(c => c.cohorte))].filter(Boolean).sort().reverse();
+      coh.forEach(c => document.getElementById('filter-cohorte').add(new Option(c, c)));
+    }
     renderAll();
-    document.getElementById('dot').classList.remove('loading');
-    document.getElementById('status-text').textContent = "Actualizado";
+    dot.classList.remove('syncing');
+    msg.textContent = "Última actualización: " + new Date().toLocaleTimeString();
     delete window[cb];
     document.head.removeChild(s);
   };
   document.head.appendChild(s);
 }
 
-function populateFilter() {
-  const coh = [...new Set(STORE.candidatos.map(c => c.cohorte))].sort().reverse();
-  const sel = document.getElementById('sel-cohorte');
-  coh.forEach(c => sel.add(new Option(c, c)));
-}
-
 function renderAll() {
-  const f = document.getElementById('sel-cohorte').value;
+  const f = document.getElementById('filter-cohorte').value;
   const cands = f ? STORE.candidatos.filter(c => c.cohorte === f) : STORE.candidatos;
   const imps = f ? STORE.impresiones.filter(i => i.cohorte === f) : STORE.impresiones;
+  const rank = f ? STORE.entrevistas.filter(e => e.cohorte === f) : STORE.entrevistas;
   
-  const mImps = imps.reduce((a,b) => a + b.impresiones, 0);
-  const mRes = imps.reduce((a,b) => a + b.resultados, 0);
   const mGastado = imps.reduce((a,b) => a + b.gastado, 0);
-  const cIngresados = cands.filter(c => c.estado === 'Ingresado').length;
+  const cIngresos = cands.filter(c => c.estado === 'Ingresado').length;
 
   // KPIs
   document.getElementById('kpi-box').innerHTML = `
-    <div class="card"><div class="kpi-label">Inversión Meta</div><div class="kpi-val">$${mGastado.toLocaleString('es-AR')}</div></div>
-    <div class="card"><div class="kpi-label">Leads Totales</div><div class="kpi-val">${cands.length}</div></div>
-    <div class="card"><div class="kpi-label">Costo x Lead</div><div class="kpi-val">$${cands.length ? Math.round(mGastado/cands.length) : 0}</div></div>
-    <div class="card"><div class="kpi-label">Costo x Ingreso</div><div class="kpi-val" style="color:var(--oro-dark)">$${cIngresados ? Math.round(mGastado/cIngresados) : 0}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Inversión en Ads</div><div class="kpi-val">$${mGastado.toLocaleString('es-AR')}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Leads en BD</div><div class="kpi-val">${cands.length}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Costo x Lead</div><div class="kpi-val">$${cands.length ? Math.round(mGastado/cands.length) : 0}</div></div>
+    <div class="kpi-card"><div class="kpi-label">Costo x Agente</div><div class="kpi-val" style="color:var(--oro-dark)">$${cIngresos ? Math.round(mGastado/cIngresos) : 0}</div></div>
   `;
 
   // FUNNEL
-  const stages = [
-    {n: mImps, l: 'Impresiones (Ads)', c: '#adb5bd'},
-    {n: imps.reduce((a,b) => a + b.alcance, 0), l: 'Alcance', c: '#868e96'},
-    {n: mRes, l: 'Leads (Meta)', c: '#4f46e5'},
-    {n: cands.length, l: 'Leads (Base de Datos)', c: '#4338ca'},
-    {n: STORE.entrevistas.filter(e => !f || e.cohorte === f).length, l: 'Entrevistados', c: '#f59e0b'},
-    {n: cIngresados, l: 'Ingresos Efectivos', c: '#1F6C43'}
+  const funnelStages = [
+    {n: imps.reduce((a,b) => a + b.impresiones, 0), l: 'Impresiones (Meta)', c: '#adb5bd'},
+    {n: imps.reduce((a,b) => a + b.resultados, 0), l: 'Leads (Reportado Meta)', c: '#6366f1'},
+    {n: cands.length, l: 'Leads (Registrados BD)', c: '#4f46e5'},
+    {n: cands.filter(c => !['A contactar','Rechazado/Baja'].includes(c.estado)).length, l: 'En Proceso Operativo', c: '#f59e0b'},
+    {n: rank.length, l: 'Entrevistados / Ranking', c: '#d97706'},
+    {n: cIngresos, l: 'Ingresos Efectivos', c: '#1F6C43'}
   ];
-
-  document.getElementById('funnel-box').innerHTML = stages.map((s, i) => {
+  document.getElementById('funnel-box').innerHTML = funnelStages.map((s, i) => {
     const w = 100 - (i*8);
-    const conv = (i>0 && stages[i-1].n > 0) ? `⬇ Eficiencia: ${((s.n/stages[i-1].n)*100).toFixed(1)}%` : '';
-    return `
-      <div class="funnel-item" style="width:${w}%">
-        <div class="conv-label">${conv}</div>
-        <div class="stage" style="background:${s.c}">${s.l} <span>${s.n.toLocaleString('es-AR')}</span></div>
-      </div>
-    `;
+    const eff = (i>0 && funnelStages[i-1].n > 0) ? `⬇ Eficiencia: ${((s.n/funnelStages[i-1].n)*100).toFixed(1)}%` : '';
+    return `<div class="funnel-stage" style="width:${w}%">
+      <div class="conv-tag">${eff}</div>
+      <div class="stage-pill" style="background:${s.c}">${s.l} <span>${s.n.toLocaleString()}</span></div>
+    </div>`;
   }).join('');
 
-  // TABLA
-  document.getElementById('table-body').innerHTML = cands.map(c => `
+  // BARS
+  drawBars('source-chart', cands, 'fuente');
+  drawBars('reject-chart', cands.filter(c => c.estado === 'Rechazado/Baja'), 'motivoRechazo');
+
+  // TABLE
+  document.getElementById('table-body').innerHTML = cands.slice(0,100).map(c => `
     <tr>
-      <td style="font-weight:700">${c.nombre}</td>
+      <td style="font-weight:700; padding:15px">${c.nombre}</td>
+      <td style="font-size:11px">${c.fuente}</td>
       <td>${c.cohorte}</td>
-      <td><span class="tag tag-meta">${c.fuente}</span></td>
-      <td><span style="color:var(--verde); font-weight:700">${c.estado}</span></td>
-      <td>${c.score}</td>
+      <td><span style="color:${c.estado.includes('Rechazado')?'#ef4444':'var(--verde)'}; font-weight:700">${c.estado}</span></td>
+      <td style="text-align:center"><button onclick="window.open('https://wa.me/549${c.telefono}')" style="background:none; border:none; cursor:pointer; font-size:18px">💬</button></td>
     </tr>
   `).join('');
 
   // RANKING
-  const rank = STORE.entrevistas.filter(e => !f || e.cohorte === f).sort((a,b) => b.total - a.total);
-  document.getElementById('ranking-grid').innerHTML = rank.map(r => `
-    <div class="card" style="border-left: 6px solid ${r.total > 25 ? 'var(--verde)' : 'var(--oro)'}">
+  document.getElementById('ranking-box').innerHTML = rank.sort((a,b) => b.total - a.total).map(r => `
+    <div class="kpi-card rank-card">
       <div class="kpi-label">${r.cohorte}</div>
-      <div style="font-family:Playfair Display; font-size:20px; font-weight:700">${r.candidato}</div>
-      <div style="font-size:24px; color:var(--verde); margin:10px 0">${r.total}/35</div>
-      <div style="font-size:12px"><strong>Fortaleza:</strong> ${r.fortaleza}</div>
+      <div style="font-family:Playfair Display; font-size:22px; font-weight:700; margin-top:5px">${r.candidato}</div>
+      <div class="rank-score">${r.total} <span style="font-size:14px; color:var(--muted)">/ 35</span></div>
+      <div style="margin-top:20px; font-size:13px; line-height:1.6">
+        <div style="margin-bottom:10px"><strong>✅ Fortaleza:</strong> ${r.fortaleza || 'Sin comentarios'}</div>
+        <div><strong>⚠️ Debilidad:</strong> ${r.debilidad || 'Sin comentarios'}</div>
+      </div>
+    </div>
+  `).join('') || '<div class="card">No hay entrevistas cargadas para este filtro</div>';
+}
+
+function drawBars(id, data, key) {
+  const counts = data.reduce((acc, curr) => { let v = curr[key] || 'Sin especificar'; acc[v] = (acc[v] || 0) + 1; return acc; }, {});
+  const sorted = Object.entries(counts).sort((a,b) => b[1] - a[1]);
+  const max = sorted.length ? sorted[0][1] : 1;
+  document.getElementById(id).innerHTML = sorted.map(([label, val]) => `
+    <div class="bar-container">
+      <div class="bar-info"><span>${label}</span><span>${val}</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(val/max)*100}%"></div></div>
     </div>
   `).join('');
 }
 
-function switchView(v, el) {
+function switchTab(v, el) {
   document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
-  document.getElementById('v-'+v).style.display = 'block';
+  document.getElementById('view-'+v).style.display = 'block';
   document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
   el.classList.add('active');
 }
 
 sync();
-setInterval(sync, 60000); // Auto-sync cada minuto
+setInterval(sync, 120000);
 </script>
 </body>
 </html>
