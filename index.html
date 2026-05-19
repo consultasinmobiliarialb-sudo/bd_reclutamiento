@@ -3,347 +3,210 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LandrianiBlenkmann · Performance v3</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<title>LandrianiBlenkmann · Performance Marketing & Recruitment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-/* --- VARIABLES Y RESET --- */
 :root {
-  --verde:#1F6C43; --verde-dark:#155232; --verde-light:#2a8a56; --verde-xs:#e8f5ee;
-  --oro:#D4AF37; --oro-light:#e8c84a; --oro-dark:#b8960f; --oro-xs:#fdf8e1;
-  --bg:#f5f4ef; --surface:#ffffff; --text:#1a1a1a; --muted:#6b7280; --border:#e2e0d8;
-  --red:#ef4444; --blue:#3b82f6; --amber:#f59e0b;
+  --verde:#1F6C43; --verde-dark:#155232; --oro:#D4AF37; --oro-dark:#b8960f;
+  --bg:#f8f9fa; --surface:#ffffff; --text:#1a1a1a; --muted:#6c757d; --border:#e9ecef;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px; min-height: 100vh;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);padding-bottom:50px}
 
-/* --- HEADER --- */
-header{background:var(--verde-dark);padding:0 24px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 15px rgba(0,0,0,.2)}
-.logo-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:white}
-.logo-text span{color:var(--oro)}
-.nav{display:flex;gap:5px}
-.nb{padding:8px 14px;border:none;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;color:rgba(255,255,255,.7);background:transparent;transition:0.2s}
-.nb:hover, .nb.active{color:white;background:rgba(255,255,255,.1)}
-.nb.btn-nuevo{background:var(--oro);color:var(--verde-dark);font-weight:700}
+header{background:var(--verde-dark);color:white;padding:15px 30px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
+.logo span{color:var(--oro)}
 
-/* --- GRID & CARDS --- */
-.main{padding:24px;max-width:1600px;margin:0 auto}
-.view{display:none}.view.active{display:block}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:15px;margin-bottom:24px}
-.kpi{background:var(--surface);padding:20px;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,.04)}
-.kpi-label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-.kpi-val{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--verde-dark)}
-.kpi-sub{font-size:12px;color:var(--muted);margin-top:4px}
+.nav-tabs{display:flex;background:white;padding:10px 30px;gap:20px;border-bottom:1px solid var(--border)}
+.tab{cursor:pointer;padding:8px 16px;border-radius:6px;font-weight:500;color:var(--muted);transition:0.3s}
+.tab.active{background:var(--verde-xs);color:var(--verde);background:#e8f5ee}
 
-/* --- FUNNEL --- */
-.funnel-container{display:flex;flex-direction:column;gap:8px;align-items:center;padding:20px 0}
-.fs-stage{border-radius:8px;padding:12px 20px;color:white;font-weight:600;display:flex;justify-content:space-between;align-items:center;transition:0.3s}
-.fs-conv{font-size:12px;color:var(--verde-dark);font-weight:700;padding:4px 0}
+.container{max-width:1400px;margin:30px auto;padding:0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;margin-bottom:30px}
 
-/* --- CHARTS & TABLES --- */
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-.cc{background:var(--surface);border-radius:12px;padding:24px;border:1px solid var(--border)}
-.cc-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:20px;color:var(--verde-dark);font-weight:600}
+.card{background:white;padding:25px;border-radius:12px;border:1px solid var(--border);box-shadow:0 2px 4px rgba(0,0,0,.02)}
+.card-title{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:20px;color:var(--verde-dark)}
+
+.kpi-val{font-size:32px;font-weight:700;color:var(--verde);font-family:'Playfair Display',serif}
+.kpi-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:5px}
+
+.funnel-item{margin-bottom:10px;display:flex;flex-direction:column;align-items:center}
+.stage{padding:12px;color:white;border-radius:6px;display:flex;justify-content:space-between;width:100%;font-weight:600;font-size:13px}
+.conv-label{font-size:11px;color:var(--verde);font-weight:700;margin:4px 0}
+
+.tag{padding:4px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase}
+.tag-meta{background:#e3f2fd;color:#0d47a1}
+
 table{width:100%;border-collapse:collapse}
-th{text-align:left;font-size:11px;text-transform:uppercase;color:var(--muted);padding:12px;border-bottom:2px solid var(--border)}
-td{padding:12px;border-bottom:1px solid var(--border)}
+th{text-align:left;padding:12px;font-size:11px;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--border)}
+td{padding:12px;border-bottom:1px solid var(--border);font-size:14px}
 
-/* --- MODALS --- */
-.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;align-items:center;justify-content:center}
-.mo.open{display:flex}
-.md{background:white;padding:30px;border-radius:15px;width:500px;max-width:90%}
-
-/* --- SYNC INDICATOR --- */
-.sync-dot{width:8px;height:8px;border-radius:50%;background:#4ade80}
-.syncing{animation:pulse 1s infinite}
-@keyframes pulse{50%{opacity:0.3}}
-
-@media(max-width:900px){ .charts-grid{grid-template-columns:1fr} }
+.sync-status{display:flex;align-items:center;gap:8px;font-size:11px}
+.dot{width:8px;height:8px;border-radius:50%;background:#4ade80}
+.dot.loading{animation:blink 1s infinite;background:var(--oro)}
+@keyframes blink{50%{opacity:0.2}}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo-text">Landriani<span>Blenkmann</span></div>
-  <div class="nav">
-    <button class="nb active" onclick="nav('dashboard',this)">📊 Dashboard</button>
-    <button class="nb" onclick="nav('candidatos',this)">👥 Candidatos</button>
-    <button class="nb" onclick="nav('entrevistas',this)">⭐ Ranking</button>
-    <button class="nb btn-nuevo" onclick="abrirNuevo()">+ Nuevo</button>
-  </div>
-  <div style="display:flex;align-items:center;gap:10px;color:white;font-size:11px">
-    <div class="sync-dot" id="sync-dot"></div>
-    <span id="sync-txt">Conectando...</span>
+  <div class="logo">Landriani<span>Blenkmann</span></div>
+  <div class="sync-status">
+    <div id="dot" class="dot"></div>
+    <span id="status-text">Conectado</span>
   </div>
 </header>
 
-<div class="main">
+<div class="nav-tabs">
+  <div class="tab active" onclick="switchView('dash', this)">📊 Dashboard</div>
+  <div class="tab" onclick="switchView('cands', this)">👥 Candidatos</div>
+  <div class="tab" onclick="switchView('rank', this)">🏆 Ranking</div>
+</div>
 
-  <!-- FILTROS GLOBALES -->
-  <div style="margin-bottom:25px;display:flex;gap:10px;align-items:center">
-    <select class="nb" id="f-cohorte" style="background:white;color:var(--text);border:1px solid var(--border)" onchange="renderAll()">
+<div class="container">
+  
+  <div style="margin-bottom:20px">
+    <select id="sel-cohorte" onchange="renderAll()" style="padding:10px;border-radius:6px;border:1px solid var(--border)">
       <option value="">Todas las Cohortes</option>
     </select>
-    <button onclick="sincronizar()" style="background:none;border:none;cursor:pointer;font-size:18px">🔄</button>
-    <input type="text" id="script-url" placeholder="Pegar URL de Apps Script..." style="font-size:10px;padding:5px;width:200px;border-radius:4px;border:1px solid var(--border)">
-    <button onclick="guardarURL()" style="font-size:10px;padding:5px 10px;cursor:pointer">Guardar Script</button>
   </div>
 
-  <!-- VISTA DASHBOARD -->
-  <div id="view-dashboard" class="view active">
-    <div class="kpi-grid" id="kpi-grid"></div>
-
-    <div class="charts-grid">
-      <div class="cc">
-        <div class="cc-title">Embudo de Conversión (Full Funnel)</div>
-        <div class="funnel-container" id="funnel-box"></div>
+  <!-- DASHBOARD VIEW -->
+  <div id="v-dash" class="view">
+    <div class="grid" id="kpi-box"></div>
+    
+    <div style="display:grid; grid-template-columns: 1.5fr 1fr; gap:20px">
+      <div class="card">
+        <div class="card-title">Embudo de Conversión (Marketing → Ingreso)</div>
+        <div id="funnel-box"></div>
       </div>
-      <div class="cc">
-        <div class="cc-title">Inversión vs Performance</div>
-        <div id="marketing-box"></div>
+      <div class="card">
+        <div class="card-title">Eficiencia de Adquisición</div>
+        <div id="eff-box"></div>
       </div>
     </div>
   </div>
 
-  <!-- VISTA CANDIDATOS -->
-  <div id="view-candidatos" class="view">
-    <div class="cc" style="overflow-x:auto">
+  <!-- CANDIDATOS VIEW -->
+  <div id="v-cands" class="view" style="display:none">
+    <div class="card">
       <table>
         <thead>
-          <tr>
-            <th>Nombre</th><th>Fuente</th><th>Cohorte</th><th>Estado</th><th>Score</th><th>Acción</th>
-          </tr>
+          <tr><th>Nombre</th><th>Cohorte</th><th>Fuente</th><th>Estado</th><th>Score</th></tr>
         </thead>
-        <tbody id="t-body"></tbody>
+        <tbody id="table-body"></tbody>
       </table>
     </div>
   </div>
 
-  <!-- VISTA RANKING -->
-  <div id="view-entrevistas" class="view">
-    <div id="ranking-box" class="kpi-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));"></div>
+  <!-- RANKING VIEW -->
+  <div id="v-rank" class="view" style="display:none">
+    <div class="grid" id="ranking-grid"></div>
   </div>
 
-</div>
-
-<!-- MODAL NUEVO -->
-<div class="mo" id="mo-nuevo">
-  <div class="md">
-    <h2 style="margin-bottom:20px;font-family:Playfair Display">Nuevo Candidato</h2>
-    <input type="text" id="n-nombre" placeholder="Nombre completo" style="width:100%;padding:10px;margin-bottom:10px">
-    <input type="text" id="n-tel" placeholder="Teléfono" style="width:100%;padding:10px;margin-bottom:10px">
-    <select id="n-fuente" style="width:100%;padding:10px;margin-bottom:10px">
-      <option>Meta ADS</option><option>Linkedin</option><option>Pagina LB</option><option>Referido</option>
-    </select>
-    <input type="text" id="n-cohorte" placeholder="AG-072026" style="width:100%;padding:10px;margin-bottom:20px">
-    <button onclick="guardarCandidato()" style="width:100%;padding:12px;background:var(--verde);color:white;border:none;border-radius:6px;font-weight:700;cursor:pointer">Guardar</button>
-    <button onclick="cerrarModal()" style="width:100%;padding:12px;margin-top:10px;background:none;border:none;color:var(--muted);cursor:pointer">Cancelar</button>
-  </div>
 </div>
 
 <script>
-// --- CONFIGURACION Y ESTADO ---
-let DATA = { candidatos:[], entrevistas:[], finanzas:[], impresiones:[] };
-let SCRIPT_URL = localStorage.getItem('lb_url') || '';
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzIocsnWXZkuUXRuM7xZFAVnIY-oDQj3fzOv4tvWUfqLtH_WIJOL9zDpfxRPB8y8smBRQ/exec";
+let STORE = { candidatos:[], entrevistas:[], finanzas:[], impresiones:[] };
 
-// --- INICIO ---
-window.onload = () => {
-  if(SCRIPT_URL) {
-    document.getElementById('script-url').value = SCRIPT_URL;
-    sincronizar();
-  }
-};
+async function sync() {
+  document.getElementById('dot').classList.add('loading');
+  document.getElementById('status-text').textContent = "Sincronizando...";
 
-function guardarURL() {
-  const url = document.getElementById('script-url').value;
-  localStorage.setItem('lb_url', url);
-  SCRIPT_URL = url;
-  sincronizar();
-}
-
-async function sincronizar() {
-  if(!SCRIPT_URL) return alert("Por favor, ingresa la URL de tu Apps Script");
-  
-  const dot = document.getElementById('sync-dot');
-  const txt = document.getElementById('sync-txt');
-  dot.classList.add('syncing');
-  txt.textContent = "Sincronizando...";
-
-  const cb = 'callback_' + Math.round(Math.random()*1000000);
-  const script = document.createElement('script');
-  script.src = `${SCRIPT_URL}?accion=todos&callback=${cb}`;
+  const cb = 'jsonp_' + Math.round(Math.random()*1000000);
+  const s = document.createElement('script');
+  s.src = `${SCRIPT_URL}?accion=todos&callback=${cb}`;
   
   window[cb] = (res) => {
-    if(res.ok) {
-      DATA = res.data;
-      renderAll();
-      dot.classList.remove('syncing');
-      txt.textContent = "Actualizado";
-    }
+    STORE = res.data;
+    if(document.getElementById('sel-cohorte').options.length <= 1) populateFilter();
+    renderAll();
+    document.getElementById('dot').classList.remove('loading');
+    document.getElementById('status-text').textContent = "Actualizado";
     delete window[cb];
-    document.head.removeChild(script);
+    document.head.removeChild(s);
   };
-  document.head.appendChild(script);
+  document.head.appendChild(s);
 }
 
-function nav(v, btn) {
-  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+function populateFilter() {
+  const coh = [...new Set(STORE.candidatos.map(c => c.cohorte))].sort().reverse();
+  const sel = document.getElementById('sel-cohorte');
+  coh.forEach(c => sel.add(new Option(c, c)));
 }
 
 function renderAll() {
-  const cohorte = document.getElementById('f-cohorte').value;
+  const f = document.getElementById('sel-cohorte').value;
+  const cands = f ? STORE.candidatos.filter(c => c.cohorte === f) : STORE.candidatos;
+  const imps = f ? STORE.impresiones.filter(i => i.cohorte === f) : STORE.impresiones;
   
-  // Poblar filtro cohortes si está vacío
-  if(document.getElementById('f-cohorte').options.length <= 1) {
-    const uniqueC = [...new Set(DATA.candidatos.map(c => c.cohorte))].sort().reverse();
-    uniqueC.forEach(c => {
-      const opt = new Option(c, c);
-      document.getElementById('f-cohorte').add(opt);
-    });
-  }
-
-  renderDashboard(cohorte);
-  renderCandidatos(cohorte);
-  renderRanking(cohorte);
-}
-
-function renderDashboard(f) {
-  const cands = f ? DATA.candidatos.filter(c => c.cohorte === f) : DATA.candidatos;
-  const imps = f ? DATA.impresiones.filter(i => i.cohorte === f) : DATA.impresiones;
-  const fins = f ? DATA.finanzas.filter(i => i.cohorte === f) : DATA.finanzas;
-
-  const totalImps = imps.reduce((a,b) => a + (parseInt(b.impresiones)||0), 0);
-  const totalClics = imps.reduce((a,b) => a + (parseInt(b.clics)||0), 0);
-  const totalLeads = cands.length;
-  const totalEntrevistas = DATA.entrevistas.filter(e => !f || e.cohorte === f).length;
-  const totalIngresos = cands.filter(c => c.estado === 'Ingresado').length;
-  const totalInversion = fins.reduce((a,b) => a + (b.inversion||0), 0);
+  const mImps = imps.reduce((a,b) => a + b.impresiones, 0);
+  const mRes = imps.reduce((a,b) => a + b.resultados, 0);
+  const mGastado = imps.reduce((a,b) => a + b.gastado, 0);
+  const cIngresados = cands.filter(c => c.estado === 'Ingresado').length;
 
   // KPIs
-  document.getElementById('kpi-grid').innerHTML = `
-    <div class="kpi"><div class="kpi-label">Impresiones Meta</div><div class="kpi-val">${totalImps.toLocaleString()}</div></div>
-    <div class="kpi"><div class="kpi-label">Leads Totales</div><div class="kpi-val">${totalLeads}</div></div>
-    <div class="kpi"><div class="kpi-label">Costo x Lead</div><div class="kpi-val">$${totalLeads > 0 ? Math.round(totalInversion/totalLeads) : 0}</div></div>
-    <div class="kpi"><div class="kpi-label">Costo x Ingreso</div><div class="kpi-val" style="color:var(--oro-dark)">$${totalIngresos > 0 ? Math.round(totalInversion/totalIngresos) : 0}</div></div>
+  document.getElementById('kpi-box').innerHTML = `
+    <div class="card"><div class="kpi-label">Inversión Meta</div><div class="kpi-val">$${mGastado.toLocaleString('es-AR')}</div></div>
+    <div class="card"><div class="kpi-label">Leads Totales</div><div class="kpi-val">${cands.length}</div></div>
+    <div class="card"><div class="kpi-label">Costo x Lead</div><div class="kpi-val">$${cands.length ? Math.round(mGastado/cands.length) : 0}</div></div>
+    <div class="card"><div class="kpi-label">Costo x Ingreso</div><div class="kpi-val" style="color:var(--oro-dark)">$${cIngresados ? Math.round(mGastado/cIngresados) : 0}</div></div>
   `;
 
-  // Funnel Visual con Conversiones Relativas
+  // FUNNEL
   const stages = [
-    { n: totalImps, l: 'Impresiones', c: '#94a3b8' },
-    { n: totalClics, l: 'Clics (Ads)', c: '#64748b' },
-    { n: totalLeads, l: 'Leads', c: '#6366f1' },
-    { n: totalEntrevistas, l: 'Entrevistas', c: '#f59e0b' },
-    { n: totalIngresos, l: 'Ingresos', c: '#1F6C43' }
+    {n: mImps, l: 'Impresiones (Ads)', c: '#adb5bd'},
+    {n: imps.reduce((a,b) => a + b.alcance, 0), l: 'Alcance', c: '#868e96'},
+    {n: mRes, l: 'Leads (Meta)', c: '#4f46e5'},
+    {n: cands.length, l: 'Leads (Base de Datos)', c: '#4338ca'},
+    {n: STORE.entrevistas.filter(e => !f || e.cohorte === f).length, l: 'Entrevistados', c: '#f59e0b'},
+    {n: cIngresados, l: 'Ingresos Efectivos', c: '#1F6C43'}
   ];
 
   document.getElementById('funnel-box').innerHTML = stages.map((s, i) => {
-    const width = 100 - (i*10);
-    let convHtml = '';
-    if(i > 0 && stages[i-1].n > 0) {
-      const rate = ((s.n / stages[i-1].n) * 100).toFixed(1);
-      convHtml = `<div class="fs-conv">⬇ Tasa Conv: ${rate}%</div>`;
-    }
+    const w = 100 - (i*8);
+    const conv = (i>0 && stages[i-1].n > 0) ? `⬇ Eficiencia: ${((s.n/stages[i-1].n)*100).toFixed(1)}%` : '';
     return `
-      ${convHtml}
-      <div class="fs-stage" style="width:${width}%; background:${s.c}">
-        <span>${s.l}</span>
-        <span>${s.n.toLocaleString()}</span>
+      <div class="funnel-item" style="width:${w}%">
+        <div class="conv-label">${conv}</div>
+        <div class="stage" style="background:${s.c}">${s.l} <span>${s.n.toLocaleString('es-AR')}</span></div>
       </div>
     `;
   }).join('');
 
-  // Marketing Stats
-  const ctr = totalImps > 0 ? ((totalClics/totalImps)*100).toFixed(2) : 0;
-  const leadRate = totalClics > 0 ? ((totalLeads/totalClics)*100).toFixed(1) : 0;
-
-  document.getElementById('marketing-box').innerHTML = `
-    <div style="display:flex; flex-direction:column; gap:15px">
-      <div style="background:var(--bg); padding:15px; border-radius:8px">
-        <div style="font-size:12px; color:var(--muted)">CTR GLOBAL (Clics/Impresiones)</div>
-        <div style="font-size:24px; font-weight:700; color:var(--blue)">${ctr}%</div>
-      </div>
-      <div style="background:var(--bg); padding:15px; border-radius:8px">
-        <div style="font-size:12px; color:var(--muted)">RATIO LEAD/CLIC</div>
-        <div style="font-size:24px; font-weight:700; color:var(--verde)">${leadRate}%</div>
-      </div>
-      <div style="background:var(--oro-xs); padding:15px; border-radius:8px; border:1px solid var(--oro)">
-        <div style="font-size:12px; color:var(--oro-dark); font-weight:700">INVERSIÓN TOTAL COHORTE</div>
-        <div style="font-size:24px; font-weight:700; color:var(--verde-dark)">$${totalInversion.toLocaleString()}</div>
-      </div>
-    </div>
-  `;
-}
-
-function renderCandidatos(f) {
-  const filtered = f ? DATA.candidatos.filter(c => c.cohorte === f) : DATA.candidatos;
-  document.getElementById('t-body').innerHTML = filtered.map(c => `
+  // TABLA
+  document.getElementById('table-body').innerHTML = cands.map(c => `
     <tr>
-      <td style="font-weight:600">${c.nombre}</td>
-      <td><span style="font-size:10px; padding:3px 8px; background:#eee; border-radius:4px">${c.fuente}</span></td>
+      <td style="font-weight:700">${c.nombre}</td>
       <td>${c.cohorte}</td>
-      <td><span style="padding:4px 8px; border-radius:20px; font-size:11px; font-weight:700; background:var(--verde-xs); color:var(--verde-dark)">${c.estado}</span></td>
-      <td style="font-weight:700; text-align:center">${c.score || '—'}</td>
-      <td><button onclick="window.open('https://wa.me/549${c.telefono}')" style="cursor:pointer; border:none; background:none">💬</button></td>
+      <td><span class="tag tag-meta">${c.fuente}</span></td>
+      <td><span style="color:var(--verde); font-weight:700">${c.estado}</span></td>
+      <td>${c.score}</td>
     </tr>
+  `).join('');
+
+  // RANKING
+  const rank = STORE.entrevistas.filter(e => !f || e.cohorte === f).sort((a,b) => b.total - a.total);
+  document.getElementById('ranking-grid').innerHTML = rank.map(r => `
+    <div class="card" style="border-left: 6px solid ${r.total > 25 ? 'var(--verde)' : 'var(--oro)'}">
+      <div class="kpi-label">${r.cohorte}</div>
+      <div style="font-family:Playfair Display; font-size:20px; font-weight:700">${r.candidato}</div>
+      <div style="font-size:24px; color:var(--verde); margin:10px 0">${r.total}/35</div>
+      <div style="font-size:12px"><strong>Fortaleza:</strong> ${r.fortaleza}</div>
+    </div>
   `).join('');
 }
 
-function renderRanking(f) {
-  const filtered = f ? DATA.entrevistas.filter(e => e.cohorte === f) : DATA.entrevistas;
-  const sorted = filtered.sort((a,b) => (b.total||0) - (a.total||0));
-  
-  document.getElementById('ranking-box').innerHTML = sorted.map(e => {
-    const total = (Number(e.impulso)+Number(e.aprendizaje)+Number(e.prospeccion)+Number(e.esfera)+Number(e.disciplina)+Number(e.relaciones)+Number(e.tecnologia)+Number(e.etica)) || 0;
-    const color = total >= 30 ? 'var(--verde)' : total >= 22 ? 'var(--oro-dark)' : 'var(--red)';
-    return `
-      <div class="kpi" style="border-left: 5px solid ${color}">
-        <div style="display:flex; justify-content:space-between">
-          <div>
-            <div class="kpi-label">${e.cohorte}</div>
-            <div style="font-family:Playfair Display; font-size:18px; font-weight:700">${e.candidato}</div>
-          </div>
-          <div style="font-size:24px; font-weight:700; color:${color}">${total}/35</div>
-        </div>
-        <div style="margin-top:10px; font-size:11px; color:var(--muted)">
-          <strong>Fortaleza:</strong> ${e.fortaleza || '—'}<br>
-          <strong>Debilidad:</strong> ${e.debilidad || '—'}
-        </div>
-      </div>
-    `;
-  }).join('');
+function switchView(v, el) {
+  document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
+  document.getElementById('v-'+v).style.display = 'block';
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
 }
 
-// --- ACCIONES ---
-function abrirNuevo() { document.getElementById('mo-nuevo').classList.add('open'); }
-function cerrarModal() { document.getElementById('mo-nuevo').classList.remove('open'); }
-
-async function guardarCandidato() {
-  const cand = {
-    id: Date.now(),
-    nombre: document.getElementById('n-nombre').value,
-    telefono: document.getElementById('n-tel').value,
-    fuente: document.getElementById('n-fuente').value,
-    cohorte: document.getElementById('n-cohorte').value,
-    estado: 'A contactar',
-    fecha: new Date().toISOString().split('T')[0]
-  };
-
-  if(!cand.nombre || !cand.cohorte) return alert("Faltan datos");
-
-  const cb = 'cb_' + Date.now();
-  const script = document.createElement('script');
-  script.src = `${SCRIPT_URL}?accion=upsertCandidato&payload=${encodeURIComponent(JSON.stringify(cand))}&callback=${cb}`;
-  
-  window[cb] = (res) => {
-    alert("Candidato guardado con éxito");
-    cerrarModal();
-    sincronizar();
-    delete window[cb];
-  };
-  document.head.appendChild(script);
-}
+sync();
+setInterval(sync, 60000); // Auto-sync cada minuto
 </script>
 </body>
 </html>
