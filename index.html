@@ -3,143 +3,133 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LB · Business Intelligence v7.1</title>
+<title>LB BI Hub v8.0</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --verde:#1F6C43; --verde-dark:#155232; --oro:#D4AF37; --oro-dark:#b8960f;
-  --bg:#f0f2f0; --surface:#ffffff; --text:#1a1a1a; --muted:#6c757d; --border:#dce1de;
+  --bg:#f2f4f3; --surface:#ffffff; --text:#1a1a1a; --muted:#6c757d; --border:#d8dedb;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);padding-bottom:50px}
 
 /* HEADER & FILTERS */
 header{background:var(--verde-dark);color:white;padding:15px 40px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000}
 .logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700}
 .logo span{color:var(--oro)}
-.filter-panel{background:white;padding:20px 40px;border-bottom:1px solid var(--border);display:flex;gap:20px;flex-wrap:wrap;align-items:flex-end}
-.f-select{padding:10px;border-radius:6px;border:1px solid var(--border);min-width:180px;font-size:13px}
-.pill-container{display:flex;gap:8px;flex-wrap:wrap;padding:10px 40px;background:white}
-.pill{background:#e8f5ee;color:var(--verde);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:8px}
 
-/* KPI & CARDS */
-.container{max-width:1650px;margin:25px auto;padding:0 40px}
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:20px;margin-bottom:25px}
+.filter-bar{background:white;padding:20px 40px;border-bottom:1px solid var(--border);display:flex;gap:20px;align-items:center}
+.f-group{display:flex;flex-direction:column;gap:5px}
+.f-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase}
+.f-select{padding:10px;border-radius:8px;border:1px solid var(--border);min-width:200px;font-weight:600}
+
+.cost-banner{background:white;padding:12px 25px;border-radius:10px;border:1px solid var(--border);border-left:5px solid var(--oro);font-size:13px}
+
+/* DASHBOARD GRID */
+.container{max-width:1650px;margin:30px auto;padding:0 40px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:20px;margin-bottom:30px}
 .kpi-card{background:white;padding:25px;border-radius:15px;border:1px solid var(--border);border-top:5px solid var(--verde)}
-.kpi-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--verde-dark)}
+.kpi-val{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--verde-dark)}
+.kpi-lbl{font-size:12px;text-transform:uppercase;color:var(--muted);font-weight:700}
 
-/* DASHBOARD LAYOUT */
-.dashboard-grid{display:grid;grid-template-columns: 1fr 1.2fr; gap:25px}
-.card{background:white;padding:25px;border-radius:15px;border:1px solid var(--border);margin-bottom:25px}
-.card-header{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:20px;color:var(--verde-dark);border-bottom:2px solid var(--bg);padding-bottom:12px}
+.main-grid{display:grid;grid-template-columns: 1fr 1.1fr; gap:30px}
+.card{background:white;padding:30px;border-radius:15px;border:1px solid var(--border);margin-bottom:30px}
+.card-h{font-family:'Playfair Display',serif;font-size:20px;margin-bottom:25px;color:var(--verde-dark);border-bottom:2px solid var(--bg);padding-bottom:15px}
 
-/* FUNNELS - RESTORED */
-.funnel-stage{margin-bottom:8px;display:flex;flex-direction:column;align-items:center}
-.stage-pill{padding:10px 15px;color:white;border-radius:8px;display:flex;justify-content:space-between;width:100%;font-weight:700;font-size:12px}
-.conv-arrow{font-size:10px;color:var(--verde);font-weight:800;padding:4px 0}
+/* FUNNELS */
+.funnel-stage{margin-bottom:10px;display:flex;flex-direction:column;align-items:center}
+.stage-pill{padding:12px 18px;color:white;border-radius:8px;display:flex;justify-content:space-between;width:100%;font-weight:700;font-size:13px;box-shadow:0 3px 6px rgba(0,0,0,0.08)}
+.conv-arrow{font-size:11px;color:var(--verde);font-weight:800;padding:5px 0}
 
-/* TIMES - RESTORED */
+/* TIMES */
 .time-grid{display:grid;grid-template-columns:repeat(2, 1fr);gap:15px}
-.time-item{background:var(--bg);padding:20px;border-radius:12px;text-align:center;border:1px solid var(--border)}
-.time-val{font-size:28px;font-weight:700;color:var(--verde-dark);display:block}
-.time-lbl{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:5px}
+.time-item{background:white;padding:25px;border-radius:15px;text-align:center;border:1px solid var(--border)}
+.time-val{font-size:32px;font-weight:700;color:var(--verde-dark);display:block}
+.time-lbl{font-size:10px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:8px}
 
 /* BARS */
 .bar-row{margin-bottom:15px}
-.bar-info{display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:5px}
-.bar-track{background:#eee;height:12px;border-radius:6px;overflow:hidden}
+.bar-txt{display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px}
+.bar-track{background:#e9ecef;height:12px;border-radius:6px;overflow:hidden}
 .bar-fill{height:100%;background:var(--verde);border-radius:6px;transition:width 1s ease}
 
-.view{display:none}.view.active{display:block}
-.nav-tabs{display:flex;gap:30px;margin-bottom:25px;border-bottom:2px solid var(--border)}
-.tab{padding:10px 5px;cursor:pointer;font-weight:700;color:var(--muted)}
-.tab.active{color:var(--verde);border-bottom-color:var(--verde)}
+/* RANKING */
+.rank-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));gap:25px}
+.rank-card{border-left:8px solid var(--oro);position:relative}
+.score-badge{position:absolute;top:25px;right:25px;font-size:26px;font-family:'Playfair Display',serif;font-weight:700;color:var(--verde)}
 
-.sync-dot{width:10px;height:10px;border-radius:50%;background:#4ade80}
-.sync-dot.loading{animation:pulse 1s infinite;background:var(--oro)}
+.sync-status{display:flex;align-items:center;gap:10px;font-size:12px}
+.dot{width:10px;height:10px;border-radius:50%;background:#4ade80}
+.dot.loading{animation:pulse 1s infinite;background:var(--oro)}
 @keyframes pulse{50%{opacity:0.2}}
 </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">Landriani<span>Blenkmann</span> Performance Hub</div>
-  <div style="display:flex;align-items:center;gap:12px;font-size:12px">
-    <div id="sync-dot" class="sync-dot"></div>
+  <div class="logo">Landriani<span>Blenkmann</span>Hub v8.0</div>
+  <div class="sync-status">
+    <div id="sync-dot" class="dot"></div>
     <span id="sync-msg">Cargando...</span>
   </div>
 </header>
 
-<div class="filter-panel">
-  <div style="display:flex; flex-direction:column; gap:5px">
-    <label style="font-size:10px; font-weight:700; color:var(--muted)">COHORTES (MULTI)</label>
-    <select id="sel-cohorte" class="f-select" onchange="addPill(this.value)">
-      <option value="">Añadir Cohorte...</option>
+<div class="filter-bar">
+  <div class="f-group">
+    <label class="f-label">Seleccionar Cohorte</label>
+    <select id="sel-cohorte" class="f-select" onchange="renderAll()">
+      <option value="">Todas las Cohortes</option>
     </select>
   </div>
-  <div style="display:flex; flex-direction:column; gap:5px">
-    <label style="font-size:10px; font-weight:700; color:var(--muted)">AÑO</label>
-    <select id="sel-anio" class="f-select" onchange="renderAll()">
-      <option value="">Todos</option>
-      <option value="2025">2025</option><option value="2026">2026</option>
-    </select>
-  </div>
-  <button onclick="clearFilters()" style="padding:10px 20px; border-radius:6px; background:#fff; border:1px solid var(--border); font-weight:700; cursor:pointer">Limpiar Filtros</button>
+  <div id="cost-banner" class="cost-banner"></div>
 </div>
-<div id="pills-container" class="pill-container"></div>
 
 <div class="container">
-  <div class="nav-tabs">
-    <div class="tab active" onclick="switchTab('dash', this)">📊 PERFORMANCE ESTRATÉGICO</div>
-    <div class="tab" onclick="switchTab('rank', this)">🏆 RANKING DE TALENTO</div>
-  </div>
+  
+  <div class="kpi-row" id="kpi-box"></div>
 
-  <!-- DASHBOARD -->
-  <div id="v-dash" class="view active">
-    <div id="cost-banner" style="background:white; padding:15px 25px; border-radius:12px; border:1px solid var(--border); margin-bottom:20px; font-size:13px; border-left:5px solid var(--oro)"></div>
-    <div class="kpi-row" id="kpi-box"></div>
-
-    <div class="dashboard-grid">
-      <div>
-        <div class="card">
-          <div class="card-header">Funnel: Meta Ads</div>
-          <div id="funnel-meta"></div>
-        </div>
-        <div class="card">
-          <div class="card-header">Funnel: Otros Canales</div>
-          <div id="funnel-otros"></div>
-        </div>
+  <div class="main-grid">
+    <!-- COLUMNA IZQUIERDA: FUNNELS -->
+    <div>
+      <div class="card">
+        <div class="card-h">Funnel: Meta Ads (Performance)</div>
+        <div id="funnel-meta"></div>
       </div>
-      <div>
-        <div class="card">
-          <div class="card-header">Lead Time (Promedio Días)</div>
-          <div class="time-grid" id="time-box"></div>
-        </div>
-        <div class="card">
-          <div class="card-header">Distribución por Fuente</div>
-          <div id="source-box"></div>
-        </div>
-        <div class="card">
-          <div class="card-header">Motivos de Rechazo</div>
-          <div id="reject-box"></div>
-        </div>
+      <div class="card">
+        <div class="card-h">Funnel: Otros Canales (Linkedin / Ref / Org)</div>
+        <div id="funnel-otros"></div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: TIEMPOS Y ANALISIS -->
+    <div>
+      <div class="card">
+        <div class="card-h">Tiempos de Proceso (Promedio Días)</div>
+        <div class="time-grid" id="time-box"></div>
+      </div>
+      <div class="card">
+        <div class="card-h">Efectividad por Fuente</div>
+        <div id="source-box"></div>
+      </div>
+      <div class="card">
+        <div class="card-h">Análisis de Rechazos</div>
+        <div id="reject-box"></div>
       </div>
     </div>
   </div>
 
-  <!-- RANKING -->
-  <div id="v-rank" class="view">
-    <div class="kpi-row" id="ranking-grid" style="grid-template-columns: repeat(auto-fit, minmax(380px, 1fr))"></div>
-  </div>
+  <div class="card-h" style="margin-top:40px">🏆 Ranking de Talentos (Ponderación Columna N)</div>
+  <div class="rank-grid" id="ranking-box"></div>
+
 </div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby9__IcKgeFcpGY9R6H-p8CC7zUPS8QF78abTseT1hMEW7xDRslilko3hzCxHGrj-uyuw/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxdX6ODo7znfGdi3Hw4o7HbXoVBUKTOaMYK6GXoCyxoHf8-1cfuhf-oS6F7nhJ8bsK0-Q/exec";
 let STORE = { candidatos:[], entrevistas:[], finanzas:[], impresiones:[] };
-let filterCohortes = [];
 
 async function sync() {
-  document.getElementById('sync-dot').classList.add('loading');
+  const dot = document.getElementById('sync-dot');
+  dot.classList.add('loading');
   const cb = 'jsonp_' + Math.round(Math.random()*1000000);
   const s = document.createElement('script');
   s.src = `${SCRIPT_URL}?accion=todos&callback=${cb}`;
@@ -150,38 +140,12 @@ async function sync() {
       coh.forEach(c => document.getElementById('sel-cohorte').add(new Option(c, c)));
     }
     renderAll();
-    document.getElementById('sync-dot').classList.remove('loading');
-    document.getElementById('sync-msg').textContent = "Sincronizado: " + new Date().toLocaleTimeString();
+    dot.classList.remove('loading');
+    document.getElementById('sync-msg').textContent = "Actualizado: " + new Date().toLocaleTimeString();
     delete window[cb];
     document.head.removeChild(s);
   };
   document.head.appendChild(s);
-}
-
-function addPill(val) {
-  if(!val || filterCohortes.includes(val)) return;
-  filterCohortes.push(val);
-  updatePills();
-  renderAll();
-}
-
-function removePill(val) {
-  filterCohortes = filterCohortes.filter(c => c !== val);
-  updatePills();
-  renderAll();
-}
-
-function updatePills() {
-  document.getElementById('pills-container').innerHTML = filterCohortes.map(c => `
-    <div class="pill">${c} <span onclick="removePill('${c}')" style="cursor:pointer">✕</span></div>
-  `).join('');
-}
-
-function clearFilters() {
-  filterCohortes = [];
-  document.getElementById('sel-anio').value = "";
-  updatePills();
-  renderAll();
 }
 
 function diffDays(d1, d2) {
@@ -192,91 +156,76 @@ function diffDays(d1, d2) {
 }
 
 function getAvg(arr) {
-  const valid = arr.filter(v => v !== null);
-  return valid.length ? (valid.reduce((a,b) => a+b, 0) / valid.length).toFixed(1) : "—";
+  const v = arr.filter(x => x !== null);
+  return v.length ? (v.reduce((a,b) => a+b, 0) / v.length).toFixed(1) : "—";
 }
 
 function renderAll() {
-  const anio = document.getElementById('sel-anio').value;
-
-  // FILTRADO
-  let cands = STORE.candidatos;
-  if(filterCohortes.length) cands = cands.filter(c => filterCohortes.includes(c.cohorte));
-  if(anio) cands = cands.filter(c => c.fPost.includes(anio));
-
-  let imps = STORE.impresiones;
-  if(filterCohortes.length) imps = imps.filter(i => filterCohortes.includes(i.cohorte));
-
-  let fins = STORE.finanzas;
-  if(filterCohortes.length) fins = fins.filter(i => filterCohortes.includes(i.cohorte));
+  const f = document.getElementById('sel-cohorte').value;
+  const cands = f ? STORE.candidatos.filter(c => c.cohorte === f) : STORE.candidatos;
+  const imps = f ? STORE.impresiones.filter(i => i.cohorte === f) : STORE.impresiones;
+  const fins = f ? STORE.finanzas.filter(i => i.cohorte === f) : STORE.finanzas;
 
   // COSTOS
-  const mGastado = imps.reduce((a,b) => a + b.gastado, 0);
-  const oGastado = fins.filter(i => !i.canal.includes('Meta')).reduce((a,b) => a + b.inversion, 0);
-  const tGastado = mGastado + oGastado;
-
+  const mInv = imps.reduce((a,b) => a + b.gastado, 0);
+  const oInv = fins.filter(i => !i.canal.includes('Meta')).reduce((a,b) => a + b.inversion, 0);
   document.getElementById('cost-banner').innerHTML = `
-    <strong>Inversión Meta:</strong> $${mGastado.toLocaleString()} | 
-    <strong>Otros Canales:</strong> $${oGastado.toLocaleString()} | 
-    <strong>Inversión Total:</strong> $${tGastado.toLocaleString()}
+    Inversión Meta: <strong>$${mInv.toLocaleString()}</strong> | Otros Canales: <strong>$${oInv.toLocaleString()}</strong> | Total: <strong>$${(mInv+oInv).toLocaleString()}</strong>
   `;
 
   // KPIs
-  const ing = cands.filter(c => c.estado === 'Ingresado').length;
-  const baja = cands.filter(c => c.estado === 'Ingresado/Baja').length;
-  const totalIng = ing + baja;
-
+  const ingresados = cands.filter(c => c.estado === 'Ingresado').length;
   document.getElementById('kpi-box').innerHTML = `
-    <div class="kpi-card"><div class="kpi-label">Leads Totales</div><div class="kpi-val">${cands.length}</div></div>
-    <div class="kpi-card"><div class="kpi-label">Ingresos Efectivos</div><div class="kpi-val">${totalIng}</div></div>
-    <div class="kpi-card"><div class="kpi-label">Costo x Lead</div><div class="kpi-val">$${cands.length ? Math.round(tGastado/cands.length) : 0}</div></div>
-    <div class="kpi-card" style="border-top-color:var(--oro)"><div class="kpi-label">Costo x Ingreso (ROI)</div><div class="kpi-val">$${totalIng ? Math.round(tGastado/totalIng) : 0}</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Postulantes (Total)</div><div class="kpi-val">${cands.length}</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Ingresos Efectivos</div><div class="kpi-val" style="color:var(--verde)">${ingresados}</div></div>
+    <div class="kpi-card"><div class="kpi-lbl">Costo por Lead (CPL)</div><div class="kpi-val">$${cands.length ? Math.round((mInv+oInv)/cands.length) : 0}</div></div>
+    <div class="kpi-card" style="border-top-color:var(--oro)"><div class="kpi-lbl">ROI: Costo x Ingreso</div><div class="kpi-val">$${ingresados ? Math.round((mInv+oInv)/ingresados) : 0}</div></div>
   `;
 
-  // FUNNEL META (6 PASOS)
-  const metaCands = cands.filter(c => c.fuente.includes('Meta'));
-  const metaStages = [
+  // FUNNEL META (Impresiones -> Alcance -> Resultados -> Leads BD -> Entrevista -> Ingreso -> Baja)
+  const metaCands = cands.filter(c => c.fuente.toLowerCase().includes('meta'));
+  const mStages = [
     {l: 'Impresiones Meta', n: imps.reduce((a,b) => a + b.impresiones, 0), c: '#adb5bd'},
-    {l: 'Leads (Meta Ads)', n: imps.reduce((a,b) => a + b.resultados, 0), c: '#6366f1'},
+    {l: 'Alcance', n: imps.reduce((a,b) => a + b.alcance, 0), c: '#868e96'},
+    {l: 'Leads reportados Meta', n: imps.reduce((a,b) => a + b.resultados, 0), c: '#6366f1'},
     {l: 'Leads en BD (Meta)', n: metaCands.length, c: '#4f46e5'},
-    {l: 'Entrevistados', n: metaCands.filter(c => c.fEnt).length, c: '#f59e0b'},
-    {l: 'Ingresos Brutos', n: metaCands.filter(c => c.estado.includes('Ingresado')).length, c: '#1F6C43'},
+    {l: 'Entrevistados (Meta)', n: metaCands.filter(c => c.fEnt).length, c: '#f59e0b'},
+    {l: 'Ingresados (Meta)', n: metaCands.filter(c => c.estado.includes('Ingresado')).length, c: '#1F6C43'},
     {l: 'Bajas Post-Ingreso', n: metaCands.filter(c => c.estado === 'Ingresado/Baja').length, c: '#ef4444'}
   ];
-  renderFunnel('funnel-meta', metaStages);
+  renderFunnel('funnel-meta', mStages);
 
-  // FUNNEL OTROS (4 PASOS)
-  const otrosCands = cands.filter(c => !c.fuente.includes('Meta'));
-  const otrosStages = [
-    {l: 'Leads en BD (Otros)', n: otrosCands.length, c: '#64748b'},
-    {l: 'Entrevistados', n: otrosCands.filter(c => c.fEnt).length, c: '#f59e0b'},
-    {l: 'Entrevista Broker', n: otrosCands.filter(c => c.fBrok).length, c: '#d97706'},
-    {l: 'Ingresados', n: otrosCands.filter(c => c.estado.includes('Ingresado')).length, c: '#1F6C43'}
+  // FUNNEL OTROS
+  const oCands = cands.filter(c => !c.fuente.toLowerCase().includes('meta'));
+  const oStages = [
+    {l: 'Leads en BD (Otros)', n: oCands.length, c: '#6c757d'},
+    {l: 'Entrevistados', n: oCands.filter(c => c.fEnt).length, c: '#f59e0b'},
+    {l: 'Entrevista con Broker', n: oCands.filter(c => c.fBrok).length, c: '#d97706'},
+    {l: 'Ingresados', n: oCands.filter(c => c.estado.includes('Ingresado')).length, c: '#1F6C43'}
   ];
-  renderFunnel('funnel-otros', otrosStages);
+  renderFunnel('funnel-otros', oStages);
 
   // TIEMPOS
   document.getElementById('time-box').innerHTML = `
     <div class="time-item"><span class="time-val">${getAvg(cands.map(c => diffDays(c.fPost, c.fCont)))}</span><span class="time-lbl">Postulación → Contacto</span></div>
     <div class="time-item"><span class="time-val">${getAvg(cands.map(c => diffDays(c.fCont, c.fEnt)))}</span><span class="time-lbl">Contacto → Entrevista</span></div>
     <div class="time-item"><span class="time-val">${getAvg(cands.map(c => diffDays(c.fEnt, c.fBrok)))}</span><span class="time-lbl">Entrevista → Broker</span></div>
-    <div class="time-item"><span class="time-val">${getAvg(cands.map(c => diffDays(c.fPost, c.fIng)))}</span><span class="time-lbl">Proceso Total (Días)</span></div>
+    <div class="time-item"><span class="time-val">${getAvg(cands.map(c => diffDays(c.fPost, c.fIng)))}</span><span class="time-lbl">Total Proceso (Días)</span></div>
   `;
 
-  // BARRAS
   drawBars('source-box', cands, 'fuente');
   drawBars('reject-box', cands.filter(c => c.estado === 'Rechazado/Baja'), 'motivo');
 
-  // RANKING (CORREGIDO SCORE)
-  const rank = STORE.entrevistas.filter(e => !filterCohortes.length || filterCohortes.includes(e.cohorte)).sort((a,b) => b.total - a.total);
-  document.getElementById('ranking-grid').innerHTML = rank.map(r => `
-    <div class="kpi-card" style="border-left:8px solid ${r.total >= 30 ? 'var(--verde)' : r.total >= 22 ? 'var(--oro)' : '#ef4444'}">
-      <div class="kpi-label">${r.cohorte}</div>
-      <div style="font-family:Playfair Display; font-size:22px; font-weight:700; margin:10px 0">${r.candidato}</div>
-      <div style="font-size:28px; font-weight:700; color:var(--verde-dark)">${r.total} <span style="font-size:14px; color:var(--muted)">/ 35</span></div>
-      <div style="margin-top:15px; font-size:12px; line-height:1.6">
+  // RANKING
+  const rank = STORE.entrevistas.filter(e => !f || e.cohorte === f).sort((a,b) => b.total - a.total);
+  document.getElementById('ranking-box').innerHTML = rank.map(r => `
+    <div class="kpi-card rank-card">
+      <div class="kpi-lbl">${r.cohorte}</div>
+      <div style="font-family:Playfair Display; font-size:20px; font-weight:700; margin-top:8px">${r.candidato}</div>
+      <div class="score-badge">${r.total} <span style="font-size:12px; color:var(--muted)">/ 35</span></div>
+      <div style="margin-top:20px; font-size:12px; line-height:1.6">
         <strong>Fortaleza:</strong> ${r.fortaleza || '—'}<br>
-        <strong>Debilidad:</strong> ${r.debilidad || '—'}
+        <strong style="color:var(--muted)">Debilidad:</strong> ${r.debilidad || '—'}
       </div>
     </div>
   `).join('');
@@ -285,14 +234,11 @@ function renderAll() {
 function renderFunnel(id, stages) {
   document.getElementById(id).innerHTML = stages.map((s, i) => {
     const w = 100 - (i*7);
-    const labelEff = s.l.includes('Baja') ? "Tasa Deserción" : "Eficiencia";
-    const eff = (i > 0 && stages[i-1].n > 0) ? `<div class="conv-arrow">⬇ ${labelEff}: ${((s.n/stages[i-1].n)*100).toFixed(1)}%</div>` : '';
-    return `
-      <div class="funnel-stage" style="width:${w}%">
-        ${eff}
-        <div class="stage-pill" style="background:${s.c}">${s.l} <span>${s.n.toLocaleString()}</span></div>
-      </div>
-    `;
+    const eff = (i > 0 && stages[i-1].n > 0) ? `⬇ Eficiencia: ${((s.n/stages[i-1].n)*100).toFixed(1)}%` : '';
+    return `<div class="funnel-stage" style="width:${w}%">
+      <div class="conv-arrow">${eff}</div>
+      <div class="stage-pill" style="background:${s.c}">${s.l} <span>${s.n.toLocaleString()}</span></div>
+    </div>`;
   }).join('');
 }
 
@@ -302,20 +248,14 @@ function drawBars(id, data, key) {
   const max = sorted.length ? sorted[0][1] : 1;
   document.getElementById(id).innerHTML = sorted.map(([label, val]) => `
     <div class="bar-row">
-      <div class="bar-info"><span>${label}</span><span>${val}</span></div>
+      <div class="bar-txt"><span>${label}</span><span>${val}</span></div>
       <div class="bar-track"><div class="bar-fill" style="width:${(val/max)*100}%"></div></div>
     </div>
   `).join('');
 }
 
-function switchTab(v, el) {
-  document.querySelectorAll('.view').forEach(x => x.style.display = 'none');
-  document.getElementById('view-'+v).style.display = 'block';
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-  el.classList.add('active');
-}
-
 sync();
+setInterval(sync, 180000);
 </script>
 </body>
 </html>
