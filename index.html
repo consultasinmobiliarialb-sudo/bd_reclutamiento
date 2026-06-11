@@ -118,25 +118,30 @@ header{
 .badge-red{background:#fee2e2;color:#991b1b}
 
 /* ── FUNNEL ── */
-.funnel{display:flex;flex-direction:column;gap:4px}
-.funnel-row{display:flex;align-items:center;gap:8px}
+.funnel{display:flex;flex-direction:column;gap:2px}
+.funnel-row{display:flex;align-items:center;gap:10px;padding:2px 0}
 .funnel-bar-wrap{flex:1;position:relative}
 .funnel-bar{
-  height:34px;border-radius:6px;
-  display:flex;align-items:center;padding:0 12px;
+  height:38px;border-radius:7px;
+  display:flex;align-items:center;padding:0 14px;
   justify-content:space-between;
   color:white;font-size:12px;font-weight:600;
-  transition:width .8s ease;
-  min-width:80px;
+  transition:width .9s cubic-bezier(.4,0,.2,1);
+  min-width:100px;white-space:nowrap;
+  box-shadow:0 1px 4px rgba(0,0,0,.12);
 }
-.funnel-n{font-size:11px;opacity:.85;font-weight:400}
+.funnel-n{font-size:12px;font-weight:700;margin-left:8px}
 .funnel-conv{
-  font-size:10px;font-weight:600;
-  color:var(--verde);background:var(--verde-xs);
-  padding:1px 7px;border-radius:10px;white-space:nowrap;
-  min-width:52px;text-align:right;
+  font-size:11px;font-weight:700;
+  color:var(--verde);
+  min-width:56px;text-align:right;
 }
-.funnel-arrow{font-size:10px;color:var(--muted);text-align:center;padding:1px 0;margin-left:8px}
+.funnel-conv.drop{color:var(--red)}
+.funnel-arrow{
+  font-size:10px;color:var(--muted);
+  text-align:left;padding:0 0 0 4px;
+  margin-left:0;line-height:1;
+}
 
 /* ── CHART BARS ── */
 .bar-chart{display:flex;flex-direction:column;gap:10px}
@@ -283,37 +288,43 @@ td{padding:8px 12px;vertical-align:middle}
   <!-- KPIs -->
   <div class="kpi-row" id="kpi-box"></div>
 
-  <!-- FUNNELS -->
-  <div class="section-label">Funnels de Conversión</div>
-  <div class="grid-2">
+  <!-- FUNNELS META: 2 separados lado a lado -->
+  <div class="section-label">Funnel Meta ADS</div>
+  <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
       <div class="card-head">
         <div>
-          <div class="card-title">Funnel Meta ADS</div>
-          <div class="card-sub">Desde impresiones hasta ingreso</div>
+          <div class="card-title">Rendimiento de Campaña</div>
+          <div class="card-sub">Plataforma Meta → Base de datos</div>
         </div>
-        <span class="badge badge-verde">Meta</span>
+        <span class="badge badge-verde" style="background:#ede9fe;color:#5b21b6">Impresiones</span>
       </div>
-      <div class="card-body"><div class="funnel" id="funnel-meta"></div></div>
+      <div class="card-body"><div id="funnel-meta-imp"></div></div>
     </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Conversión BD Reclutamiento</div>
+          <div class="card-sub">Leads Meta en BD → Ingresados</div>
+        </div>
+        <span class="badge badge-verde">Meta BD</span>
+      </div>
+      <div class="card-body"><div id="funnel-meta-bd"></div></div>
+    </div>
+  </div>
+
+  <!-- FUNNEL OTROS CANALES -->
+  <div class="section-label">Otros Canales (Linkedin · Referidos · Orgánico)</div>
+  <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
       <div class="card-head">
         <div>
           <div class="card-title">Funnel Otros Canales</div>
-          <div class="card-sub">Linkedin · Referidos · Orgánico</div>
+          <div class="card-sub">Desde postulación hasta ingreso</div>
         </div>
         <span class="badge badge-oro">Otros</span>
       </div>
-      <div class="card-body"><div class="funnel" id="funnel-otros"></div></div>
-    </div>
-  </div>
-
-  <!-- TIEMPOS + COMPARATIVO -->
-  <div class="section-label">Tiempos & Efectividad por Canal</div>
-  <div class="grid-3">
-    <div class="card">
-      <div class="card-head"><div class="card-title">Tiempos Promedio de Proceso</div></div>
-      <div class="card-body"><div class="time-grid" id="time-box"></div></div>
+      <div class="card-body"><div id="funnel-otros"></div></div>
     </div>
     <div class="card">
       <div class="card-head">
@@ -324,44 +335,40 @@ td{padding:8px 12px;vertical-align:middle}
       </div>
       <div class="card-body" id="comp-box"></div>
     </div>
+  </div>
+
+  <!-- TIEMPOS + EFECTIVIDAD -->
+  <div class="section-label">Tiempos & Efectividad por Canal</div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-head"><div class="card-title">Tiempos Promedio de Proceso</div></div>
+      <div class="card-body"><div class="time-grid" id="time-box"></div></div>
+    </div>
     <div class="card">
       <div class="card-head">
         <div>
           <div class="card-title">Efectividad por Fuente</div>
-          <div class="card-sub">Leads → Ingresados</div>
+          <div class="card-sub">Leads totales vs Ingresados</div>
         </div>
       </div>
       <div class="card-body"><div class="bar-chart" id="source-box"></div></div>
     </div>
-  </div>
-
-  <!-- LÍNEA TEMPORAL + IMPRESIONES -->
-  <div class="section-label">Evolución Mensual</div>
-  <div class="grid-2">
     <div class="card">
-      <div class="card-head">
-        <div>
-          <div class="card-title">Postulantes vs Ingresados por Mes</div>
-          <div class="card-sub">Volumen de leads y conversión</div>
-        </div>
-      </div>
-      <div class="card-body"><canvas id="chart-mensual" height="180"></canvas></div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <div>
-          <div class="card-title">Impresiones → Leads → Ingresados</div>
-          <div class="card-sub">Rendimiento de campaña Meta por cohorte</div>
-        </div>
-      </div>
-      <div class="card-body"><canvas id="chart-impresiones" height="180"></canvas></div>
+      <div class="card-head"><div class="card-title">Motivos de Rechazo</div></div>
+      <div class="card-body"><div class="bar-chart" id="reject-box"></div></div>
     </div>
   </div>
 
-  <!-- TABLA META + RECHAZOS -->
-  <div class="grid-2">
+  <!-- FINANZAS -->
+  <div class="section-label">Finanzas por Cohorte y Canal</div>
+  <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
-      <div class="card-head"><div class="card-title">Detalle Campañas Meta ADS</div></div>
+      <div class="card-head">
+        <div>
+          <div class="card-title">Inversión Meta ADS (BD Impresiones)</div>
+          <div class="card-sub">Por cohorte y mes · Gasto real de campaña</div>
+        </div>
+      </div>
       <div class="card-body" style="padding:0;overflow-x:auto">
         <table id="tabla-meta">
           <thead><tr><th>Cohorte</th><th>Mes</th><th>Impresiones</th><th>Alcance</th><th>Leads</th><th>CPR</th><th>Gastado</th></tr></thead>
@@ -370,8 +377,41 @@ td{padding:8px 12px;vertical-align:middle}
       </div>
     </div>
     <div class="card">
-      <div class="card-head"><div class="card-title">Motivos de Rechazo</div></div>
-      <div class="card-body"><div class="bar-chart" id="reject-box"></div></div>
+      <div class="card-head">
+        <div>
+          <div class="card-title">Inversión Total por Cohorte (BD Finanzas)</div>
+          <div class="card-sub">Todos los canales · CAC por cohorte</div>
+        </div>
+      </div>
+      <div class="card-body" style="padding:0;overflow-x:auto">
+        <table>
+          <thead><tr><th>Cohorte</th><th>Canal</th><th>Inversión</th><th>Ingresados</th><th>CAC</th></tr></thead>
+          <tbody id="tbody-finanzas"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVOLUCIÓN MENSUAL -->
+  <div class="section-label">Evolución Mensual</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Postulantes vs Ingresados por Mes</div>
+          <div class="card-sub">Volumen de leads y conversión mensual</div>
+        </div>
+      </div>
+      <div class="card-body"><canvas id="chart-mensual" height="180"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <div class="card-title">Impresiones → Leads → Ingresados por Cohorte</div>
+          <div class="card-sub">Rendimiento de campaña Meta</div>
+        </div>
+      </div>
+      <div class="card-body"><canvas id="chart-impresiones" height="180"></canvas></div>
     </div>
   </div>
 
@@ -447,7 +487,8 @@ function renderAll(){
 
   renderInvSummary(imps, fins, cands);
   renderKPIs(cands, imps, fins);
-  renderFunnelMeta(cands, imps);
+  renderFunnelMetaImp(imps);
+  renderFunnelMetaBD(cands);
   renderFunnelOtros(cands);
   renderTiempos(cands);
   renderComparativo(STORE.candidatos.filter(c=>!cf||c.cohorte===cf));
@@ -455,6 +496,7 @@ function renderAll(){
   renderChartMensual(STORE.candidatos.filter(c=>!cf||c.cohorte===cf));
   renderChartImpresiones(STORE.impresiones.filter(i=>!cf||i.cohorte===cf));
   renderTablaMeta(imps);
+  renderTablaFinanzas(fins, STORE.candidatos.filter(c=>!cf||c.cohorte===cf));
   renderRechazos(cands);
   renderRanking(STORE.entrevistas.filter(e=>!cf||e.cohorte===cf));
 }
@@ -491,45 +533,59 @@ function renderKPIs(cands, imps, fins){
   `;
 }
 
-// ── FUNNEL META ──
-function renderFunnelMeta(cands, imps){
-  const metaCands = cands.filter(c=>c.fuente&&c.fuente.toLowerCase().includes('meta'));
+// ── FUNNEL META — IMPRESIONES (plataforma) ──
+function renderFunnelMetaImp(imps){
   const totalImps = imps.reduce((a,b)=>a+b.impresiones,0);
-  const totalAlc = imps.reduce((a,b)=>a+b.alcance,0);
-  const metaLeads = imps.reduce((a,b)=>a+b.resultados,0);
+  const totalAlc  = imps.reduce((a,b)=>a+b.alcance,0);
+  const totalLeads= imps.reduce((a,b)=>a+b.resultados,0);
   const stages = [
-    {l:'Impresiones',n:totalImps,c:'#6366f1'},
-    {l:'Alcance',n:totalAlc,c:'#4f46e5'},
-    {l:'Leads reportados Meta',n:metaLeads,c:'#818cf8'},
-    {l:'Leads en BD (Meta)',n:metaCands.length,c:'#3b82f6'},
-    {l:'Contactados',n:metaCands.filter(c=>c.fCont&&c.fCont!=='').length,c:'#f59e0b'},
-    {l:'Entrevistados',n:metaCands.filter(c=>c.fEnt&&c.fEnt!=='').length,c:' #d97706'},
-    {l:'Ingresados',n:metaCands.filter(c=>c.estado==='Ingresado').length,c:'#1F6C43'},
-    {l:'Ingresado/Baja',n:metaCands.filter(c=>c.estado==='Ingresado/Baja').length,c:'#ef4444'},
+    {l:'Impresiones',       n:totalImps,  c:'#6366f1'},
+    {l:'Alcance',           n:totalAlc,   c:'#4f46e5'},
+    {l:'Leads (Meta rep.)', n:totalLeads, c:'#818cf8'},
   ];
-  renderFunnel('funnel-meta', stages);
+  renderFunnel('funnel-meta-imp', stages);
 }
 
-// ── FUNNEL OTROS ──
+// ── FUNNEL META — BD RECLUTAMIENTO ──
+function renderFunnelMetaBD(cands){
+  const meta = cands.filter(c=>c.fuente&&c.fuente.toLowerCase().includes('meta'));
+  const stages = [
+    {l:'Leads en BD (Meta)',  n:meta.length,                                                      c:'#3b82f6'},
+    {l:'Contactados',         n:meta.filter(c=>c.fCont&&c.fCont!=='').length,                     c:'#f59e0b'},
+    {l:'Entrevistados',       n:meta.filter(c=>c.fEnt&&c.fEnt!=='').length,                       c:'#d97706'},
+    {l:'Aprobados Broker',    n:meta.filter(c=>c.fBrok&&c.fBrok!=='').length,                     c:'#b45309'},
+    {l:'Ingresados',          n:meta.filter(c=>c.estado==='Ingresado').length,                    c:'#1F6C43'},
+    {l:'Ingresado/Baja',      n:meta.filter(c=>c.estado==='Ingresado/Baja').length,               c:'#ef4444'},
+  ];
+  renderFunnel('funnel-meta-bd', stages);
+}
+
+// ── FUNNEL OTROS CANALES ──
 function renderFunnelOtros(cands){
   const otros = cands.filter(c=>c.fuente&&!c.fuente.toLowerCase().includes('meta'));
   const stages = [
-    {l:'Leads en BD (Otros)',n:otros.length,c:'#6c757d'},
-    {l:'Contactados',n:otros.filter(c=>c.fCont&&c.fCont!=='').length,c:'#f59e0b'},
-    {l:'Entrevistados',n:otros.filter(c=>c.fEnt&&c.fEnt!=='').length,c:'#d97706'},
-    {l:'Entrevista con Broker',n:otros.filter(c=>c.fBrok&&c.fBrok!=='').length,c:'#b45309'},
-    {l:'Ingresados',n:otros.filter(c=>c.estado==='Ingresado').length,c:'#1F6C43'},
+    {l:'Postulados (Otros)',  n:otros.length,                                                     c:'#0891b2'},
+    {l:'Contactados',         n:otros.filter(c=>c.fCont&&c.fCont!=='').length,                    c:'#f59e0b'},
+    {l:'Entrevistados',       n:otros.filter(c=>c.fEnt&&c.fEnt!=='').length,                      c:'#d97706'},
+    {l:'Aprobados Broker',    n:otros.filter(c=>c.fBrok&&c.fBrok!=='').length,                    c:'#b45309'},
+    {l:'Ingresados',          n:otros.filter(c=>c.estado==='Ingresado').length,                   c:'#1F6C43'},
+    {l:'Ingresado/Baja',      n:otros.filter(c=>c.estado==='Ingresado/Baja').length,              c:'#ef4444'},
   ];
   renderFunnel('funnel-otros', stages);
 }
 
 function renderFunnel(id, stages){
-  const max = stages[0]?.n || 1;
+  const max = stages.filter(s=>s.n>0)[0]?.n || stages[0]?.n || 1;
   document.getElementById(id).innerHTML = stages.map((s,i) => {
-    const w = Math.max(20, (s.n/max)*100);
-    const conv = i>0&&stages[i-1].n>0 ? `${((s.n/stages[i-1].n)*100).toFixed(1)}%` : '';
+    const w = Math.max(12, (s.n/max)*100);
+    const prev = stages[i-1];
+    const conv = prev && prev.n>0 ? ((s.n/prev.n)*100).toFixed(1)+'%' : '';
+    const isDrop = prev && s.n < prev.n;
     return `
-      ${i>0?`<div class="funnel-arrow">▾</div>`:''}
+      ${i>0?`<div style="display:flex;align-items:center;gap:10px;padding:1px 0">
+        <div style="flex:1;border-left:2px dashed ${s.c}44;height:10px;margin-left:19px"></div>
+        <div class="funnel-conv${isDrop?' drop':''}">${conv}</div>
+      </div>`:''}
       <div class="funnel-row">
         <div class="funnel-bar-wrap">
           <div class="funnel-bar" style="background:${s.c};width:${w}%">
@@ -537,7 +593,6 @@ function renderFunnel(id, stages){
             <span class="funnel-n">${s.n.toLocaleString()}</span>
           </div>
         </div>
-        <div class="funnel-conv">${conv}</div>
       </div>`;
   }).join('');
 }
@@ -768,6 +823,41 @@ function renderTablaMeta(imps){
         <td>${money(r.cpr||0)}</td>
         <td><strong style="color:var(--verde)">${money(r.gastado)}</strong></td>
       </tr>`).join('');
+}
+
+// ── TABLA FINANZAS ──
+function renderTablaFinanzas(fins, cands){
+  // Agrupar por cohorte + canal
+  const grupos = {};
+  fins.forEach(f => {
+    const key = f.cohorte + '||' + (f.canal||'—');
+    if(!grupos[key]) grupos[key] = {cohorte:f.cohorte, canal:f.canal||'—', inv:0};
+    grupos[key].inv += f.inversion||0;
+  });
+  const normCoh = s => (s||'').replace(/\s/g,'').toUpperCase();
+  const rows = Object.values(grupos).sort((a,b)=>{
+    if(a.cohorte!==b.cohorte) return a.cohorte<b.cohorte?1:-1;
+    return b.inv-a.inv;
+  });
+  const totalInv = rows.reduce((a,b)=>a+b.inv,0);
+  document.getElementById('tbody-finanzas').innerHTML = rows.length===0
+    ? '<tr><td colspan="5" class="empty">Sin datos de finanzas</td></tr>'
+    : rows.map(r => {
+        const ingCoh = cands.filter(c=>c.estado==='Ingresado'&&normCoh(c.cohorte)===normCoh(r.cohorte)).length;
+        const cac = r.inv>0&&ingCoh>0 ? money(r.inv/ingCoh) : '—';
+        return `<tr>
+          <td><span class="pill pill-b">${r.cohorte}</span></td>
+          <td style="color:var(--muted)">${r.canal}</td>
+          <td><strong style="color:var(--verde)">${r.inv>0?money(r.inv):'Gratuito'}</strong></td>
+          <td style="text-align:center">${ingCoh}</td>
+          <td style="font-weight:700;color:var(--oro-dark||#7c5a1a)">${cac}</td>
+        </tr>`;
+      }).join('') +
+      `<tr style="background:var(--slate)">
+        <td colspan="2"><strong>TOTAL</strong></td>
+        <td><strong style="color:var(--verde)">${money(totalInv)}</strong></td>
+        <td></td><td></td>
+      </tr>`;
 }
 
 // ── RECHAZOS ──
