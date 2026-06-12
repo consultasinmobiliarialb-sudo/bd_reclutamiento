@@ -125,7 +125,7 @@ header{
 .badge-red{background:#fee2e2;color:#991b1b}
 
 /* ── FUNNEL: columnas verticales tipo Mixpanel ── */
-.fn-wrap{display:flex;gap:6px;align-items:stretch;width:100%;padding-top:36px}
+.fn-wrap{display:flex;gap:6px;align-items:stretch;width:100%}
 .fn-col{
   flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;
   position:relative;cursor:default;padding:10px 4px 8px;border-radius:12px;
@@ -163,8 +163,9 @@ header{
   color:var(--muted);text-align:center;line-height:1.35;
   min-height:24px;display:flex;align-items:flex-start;justify-content:center;
 }
+/* Slot de conversión: en flujo normal, altura fija para alinear todas las columnas */
+.fn-conv-slot{height:22px;display:flex;align-items:center;justify-content:center}
 .fn-conv{
-  position:absolute;top:6px;left:50%;transform:translateX(-50%);
   font-size:10px;font-weight:700;
   padding:3px 9px;border-radius:12px;white-space:nowrap;
   color:var(--verde);background:var(--verde-xs);
@@ -174,7 +175,7 @@ header{
 .fn-conv.mid{color:#92400e;background:#fef3c7;border-color:#f5dd9f}
 /* tooltip */
 .fn-col .fn-tip{
-  position:absolute;bottom:calc(100% - 24px);left:50%;transform:translateX(-50%) translateY(4px);
+  position:absolute;bottom:calc(100% - 4px);left:50%;transform:translateX(-50%) translateY(4px);
   background:var(--ink);color:white;font-size:11px;font-weight:500;
   padding:7px 12px;border-radius:8px;white-space:nowrap;
   opacity:0;pointer-events:none;transition:all .2s ease;z-index:30;
@@ -452,13 +453,13 @@ td{padding:8px 12px;vertical-align:middle}
       <div class="card-head">
         <div><div class="card-title">Postulantes vs Ingresados por Mes</div><div class="card-sub">Volumen de leads y conversión mensual</div></div>
       </div>
-      <div class="card-body"><canvas id="chart-mensual" height="240"></canvas></div>
+      <div class="card-body"><canvas id="chart-mensual"></canvas></div>
     </div>
     <div class="card">
       <div class="card-head">
         <div><div class="card-title">Impresiones → Leads → Ingresados por Cohorte</div><div class="card-sub">Rendimiento de campaña Meta</div></div>
       </div>
-      <div class="card-body"><canvas id="chart-impresiones" height="240"></canvas></div>
+      <div class="card-body"><canvas id="chart-impresiones"></canvas></div>
     </div>
   </div>
 
@@ -690,7 +691,7 @@ function renderFunnel(id, stages){
       return `
       <div class="fn-col">
         <div class="fn-tip">${tip}</div>
-        ${conv!==null?`<div class="fn-conv ${convCls}">${conv.toFixed(1)}%</div>`:''}
+        <div class="fn-conv-slot">${conv!==null?`<span class="fn-conv ${convCls}">▾ ${conv.toFixed(1)}%</span>`:''}</div>
         <div class="fn-num" style="color:${s.c}">${s.n.toLocaleString('es-AR')}</div>
         <div class="fn-track">
           <div class="fn-bar" style="height:${h}%;background:linear-gradient(180deg,${s.c},${s.c}dd)"></div>
@@ -817,96 +818,150 @@ function renderChartImpresiones(imps){
   ]);
 }
 
-// ── CHART ENGINE (Canvas nativo) ──
-function drawLineChart(canvasId, labels, datasets){
+// ── CHART ENGINE (Canvas nativo · retina · estilo moderno) ──
+function setupCanvas(canvasId, baseH){
   const canvas = document.getElementById(canvasId);
+  const dpr = window.devicePixelRatio || 1;
+  const W = canvas.parentElement.offsetWidth - 4;
+  const H = baseH;
+  canvas.style.width = W+'px';
+  canvas.style.height = H+'px';
+  canvas.width = W*dpr;
+  canvas.height = H*dpr;
   const ctx = canvas.getContext('2d');
-  const W=canvas.offsetWidth||canvas.width; const H=canvas.offsetHeight||180;
-  canvas.width=W; canvas.height=H;
-  const pad={top:20,right:20,bottom:32,left:46};
-  const cW=W-pad.left-pad.right, cH=H-pad.top-pad.bottom;
-  ctx.clearRect(0,0,W,H);
-  const allVals=datasets.flatMap(d=>d.data);
-  const maxV=Math.max(...allVals,1);
-  const step=cW/(labels.length-1||1);
-  // Grid
-  ctx.strokeStyle='#e8ede9'; ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){
-    const y=pad.top+cH-(i/4)*cH;
-    ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cW,y);ctx.stroke();
-    ctx.fillStyle='#6b7c74';ctx.font='10px Inter';ctx.textAlign='right';
-    ctx.fillText(Math.round((i/4)*maxV),pad.left-6,y+3);
-  }
-  // Labels eje X
-  ctx.fillStyle='#6b7c74';ctx.font='10px Inter';ctx.textAlign='center';
-  labels.forEach((l,i)=>{ if(i%Math.ceil(labels.length/6)===0) ctx.fillText(l,pad.left+i*step,H-8); });
-  // Lines
+  ctx.scale(dpr, dpr);
+  return {canvas, ctx, W, H};
+}
+
+function drawLegend(ctx, datasets, x, y){
+  let lx = x;
   datasets.forEach(ds=>{
-    const pts=ds.data.map((v,i)=>({x:pad.left+i*step,y:pad.top+cH-(v/maxV)*cH}));
-    if(ds.fill){
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x,pad.top+cH);
-      pts.forEach(p=>ctx.lineTo(p.x,p.y));
-      ctx.lineTo(pts[pts.length-1].x,pad.top+cH);
-      ctx.closePath();
-      ctx.fillStyle=ds.color+'22';ctx.fill();
-    }
-    ctx.beginPath();ctx.strokeStyle=ds.color;ctx.lineWidth=2.5;ctx.lineJoin='round';
-    pts.forEach((p,i)=>i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
-    ctx.stroke();
-    pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,3.5,0,Math.PI*2);ctx.fillStyle=ds.color;ctx.fill();});
-  });
-  // Legend
-  let lx=pad.left;
-  datasets.forEach(ds=>{
-    ctx.fillStyle=ds.color;ctx.fillRect(lx,6,10,6);
-    ctx.fillStyle='#6b7c74';ctx.font='10px Inter';ctx.textAlign='left';
-    ctx.fillText(ds.label,lx+14,13);lx+=ctx.measureText(ds.label).width+28;
+    // chip redondeado
+    ctx.fillStyle = ds.color;
+    ctx.beginPath(); ctx.roundRect(lx, y, 12, 12, 4); ctx.fill();
+    ctx.fillStyle = '#3d4a43'; ctx.font = '600 11px Inter'; ctx.textAlign = 'left';
+    ctx.fillText(ds.label, lx+17, y+10);
+    lx += ctx.measureText(ds.label).width + 40;
   });
 }
 
-function drawBarGroupChart(canvasId, labels, datasets){
-  const canvas=document.getElementById(canvasId);
-  const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||canvas.width; const H=canvas.offsetHeight||180;
-  canvas.width=W;canvas.height=H;
-  const pad={top:20,right:20,bottom:32,left:50};
-  const cW=W-pad.left-pad.right,cH=H-pad.top-pad.bottom;
+function drawLineChart(canvasId, labels, datasets){
+  const {ctx, W, H} = setupCanvas(canvasId, 280);
+  const pad = {top:38, right:24, bottom:40, left:50};
+  const cW = W-pad.left-pad.right, cH = H-pad.top-pad.bottom;
   ctx.clearRect(0,0,W,H);
-  const allVals=datasets.flatMap(d=>d.data);
-  const maxV=Math.max(...allVals,1);
-  const groupW=cW/labels.length;
-  const barW=(groupW-10)/datasets.length;
-  // Grid
-  ctx.strokeStyle='#e8ede9';ctx.lineWidth=1;
+  const allVals = datasets.flatMap(d=>d.data);
+  const maxV = Math.max(...allVals,1)*1.12;
+  const step = cW/(labels.length-1||1);
+
+  // Grid horizontal sutil
+  ctx.strokeStyle='#eef1ef'; ctx.lineWidth=1;
   for(let i=0;i<=4;i++){
-    const y=pad.top+cH-(i/4)*cH;
-    ctx.beginPath();ctx.moveTo(pad.left,y);ctx.lineTo(pad.left+cW,y);ctx.stroke();
-    ctx.fillStyle='#6b7c74';ctx.font='10px Inter';ctx.textAlign='right';
-    ctx.fillText(Math.round((i/4)*maxV),pad.left-4,y+3);
+    const y = pad.top+cH-(i/4)*cH;
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(pad.left+cW,y); ctx.stroke();
+    ctx.fillStyle='#8a958f'; ctx.font='10px Inter'; ctx.textAlign='right';
+    ctx.fillText(Math.round((i/4)*maxV), pad.left-8, y+3);
   }
-  // Bars
-  labels.forEach((lbl,gi)=>{
-    const gx=pad.left+gi*groupW+5;
-    datasets.forEach((ds,di)=>{
-      const bx=gx+di*barW;
-      const bh=(ds.data[gi]/maxV)*cH;
-      const by=pad.top+cH-bh;
-      ctx.fillStyle=ds.color;
-      ctx.beginPath();
-      ctx.roundRect(bx,by,barW-2,bh,2);
-      ctx.fill();
-    });
-    ctx.fillStyle='#6b7c74';ctx.font='10px Inter';ctx.textAlign='center';
-    ctx.fillText(lbl,gx+groupW/2-5,H-8);
-  });
-  // Legend
-  let lx=pad.left;
+
+  // Labels eje X — espaciados inteligentemente
+  ctx.fillStyle='#6b7c74'; ctx.font='600 10px Inter'; ctx.textAlign='center';
+  const maxLbls = Math.floor(cW/55);
+  const lblStep = Math.max(1, Math.ceil(labels.length/maxLbls));
+  labels.forEach((l,i)=>{ if(i%lblStep===0||i===labels.length-1) ctx.fillText(l, pad.left+i*step, H-14); });
+
+  // Curvas suaves con bezier
   datasets.forEach(ds=>{
-    ctx.fillStyle=ds.color;ctx.fillRect(lx,6,10,6);
-    ctx.fillStyle='#6b7c74';ctx.font='10px Inter';ctx.textAlign='left';
-    ctx.fillText(ds.label,lx+14,13);lx+=ctx.measureText(ds.label).width+28;
+    const pts = ds.data.map((v,i)=>({x:pad.left+i*step, y:pad.top+cH-(v/maxV)*cH}));
+
+    if(ds.fill && pts.length>1){
+      const grad = ctx.createLinearGradient(0,pad.top,0,pad.top+cH);
+      grad.addColorStop(0, ds.color+'33');
+      grad.addColorStop(1, ds.color+'05');
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pad.top+cH);
+      ctx.lineTo(pts[0].x, pts[0].y);
+      for(let i=1;i<pts.length;i++){
+        const xc=(pts[i-1].x+pts[i].x)/2;
+        ctx.bezierCurveTo(xc,pts[i-1].y,xc,pts[i].y,pts[i].x,pts[i].y);
+      }
+      ctx.lineTo(pts[pts.length-1].x, pad.top+cH);
+      ctx.closePath();
+      ctx.fillStyle=grad; ctx.fill();
+    }
+
+    // Línea suave
+    ctx.beginPath(); ctx.strokeStyle=ds.color; ctx.lineWidth=2.5; ctx.lineJoin='round'; ctx.lineCap='round';
+    pts.forEach((p,i)=>{
+      if(i===0){ ctx.moveTo(p.x,p.y); return; }
+      const xc=(pts[i-1].x+p.x)/2;
+      ctx.bezierCurveTo(xc,pts[i-1].y,xc,p.y,p.x,p.y);
+    });
+    ctx.stroke();
+
+    // Puntos con halo blanco
+    pts.forEach((p,i)=>{
+      ctx.beginPath(); ctx.arc(p.x,p.y,5,0,Math.PI*2); ctx.fillStyle='white'; ctx.fill();
+      ctx.beginPath(); ctx.arc(p.x,p.y,3.5,0,Math.PI*2); ctx.fillStyle=ds.color; ctx.fill();
+      // Valor sobre el punto (solo si hay espacio)
+      if(labels.length<=14 && ds.data[i]>0){
+        ctx.fillStyle=ds.color; ctx.font='700 10px Inter'; ctx.textAlign='center';
+        ctx.fillText(ds.data[i], p.x, p.y-10);
+      }
+    });
   });
+
+  drawLegend(ctx, datasets, pad.left, 8);
+}
+
+function drawBarGroupChart(canvasId, labels, datasets){
+  const {ctx, W, H} = setupCanvas(canvasId, 280);
+  const pad = {top:38, right:24, bottom:44, left:54};
+  const cW = W-pad.left-pad.right, cH = H-pad.top-pad.bottom;
+  ctx.clearRect(0,0,W,H);
+  const allVals = datasets.flatMap(d=>d.data);
+  const maxV = Math.max(...allVals,1)*1.12;
+  const groupW = cW/labels.length;
+  const barW = Math.min(34, (groupW-18)/datasets.length);
+  const groupInner = barW*datasets.length + 4*(datasets.length-1);
+
+  // Grid
+  ctx.strokeStyle='#eef1ef'; ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y = pad.top+cH-(i/4)*cH;
+    ctx.beginPath(); ctx.moveTo(pad.left,y); ctx.lineTo(pad.left+cW,y); ctx.stroke();
+    ctx.fillStyle='#8a958f'; ctx.font='10px Inter'; ctx.textAlign='right';
+    ctx.fillText(Math.round((i/4)*maxV).toLocaleString('es-AR'), pad.left-8, y+3);
+  }
+
+  // Barras con gradiente y valores arriba
+  labels.forEach((lbl,gi)=>{
+    const gx = pad.left + gi*groupW + (groupW-groupInner)/2;
+    datasets.forEach((ds,di)=>{
+      const bx = gx + di*(barW+4);
+      const bh = Math.max(2,(ds.data[gi]/maxV)*cH);
+      const by = pad.top+cH-bh;
+      const grad = ctx.createLinearGradient(0,by,0,by+bh);
+      grad.addColorStop(0, ds.color);
+      grad.addColorStop(1, ds.color+'cc');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.roundRect(bx,by,barW,bh,[6,6,0,0]); ctx.fill();
+      // Valor sobre la barra
+      if(ds.data[gi]>0){
+        ctx.fillStyle=ds.color; ctx.font='700 10px Inter'; ctx.textAlign='center';
+        ctx.fillText(ds.data[gi].toLocaleString('es-AR'), bx+barW/2, by-6);
+      }
+    });
+    // Label cohorte abreviado: "AG - 052026" → "05/26"
+    let short = lbl;
+    const m = lbl.match(/(\d{2})(\d{4})/);
+    if(m) short = m[1]+'/'+m[2].slice(2);
+    ctx.fillStyle='#3d4a43'; ctx.font='700 11px Inter'; ctx.textAlign='center';
+    ctx.fillText(short, pad.left+gi*groupW+groupW/2, H-22);
+    ctx.fillStyle='#a3ada7'; ctx.font='9px Inter';
+    ctx.fillText('Cohorte', pad.left+gi*groupW+groupW/2, H-10);
+  });
+
+  drawLegend(ctx, datasets, pad.left, 8);
 }
 
 // ── TABLA META ──
