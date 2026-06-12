@@ -543,7 +543,6 @@ function renderAll(){
   renderChartImpresiones(STORE.impresiones.filter(i=>!cf||i.cohorte===cf));
   renderTablaMeta(imps);
   renderTablaFinanzas(fins, STORE.candidatos.filter(c=>!cf||c.cohorte===cf));
-  renderRechazos(cands);
   renderRanking(STORE.entrevistas.filter(e=>!cf||e.cohorte===cf));
 }
 
@@ -962,26 +961,6 @@ function renderTablaFinanzas(fins, cands){
         <td><strong style="color:var(--verde)">${money(totalInv)}</strong></td>
         <td></td><td></td>
       </tr>`;
-}
-
-// ── RECHAZOS ──
-function renderRechazos(cands){
-  const counts={};
-  cands.filter(c=>c.estado==='Rechazado/Baja').forEach(c=>{
-    const m=c.motivo||'Sin especificar';
-    counts[m]=(counts[m]||0)+1;
-  });
-  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  const maxR=sorted.length?sorted[0][1]:1;
-  const COLORS=['#ef4444','#f97316','#f59e0b','#8b5cf6','#6b7280'];
-  document.getElementById('reject-box').innerHTML = sorted.length===0
-    ? '<div class="empty">Sin datos</div>'
-    : sorted.map(([l,v],i)=>`
-      <div class="bar-row">
-        <div class="bar-lbl">${l}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(v/maxR)*100}%;background:${COLORS[i%5]}">${v}</div></div>
-        <div class="bar-val">${v}</div>
-      </div>`).join('');
 }
 
 // ── RANKING ──
