@@ -471,34 +471,138 @@ td{padding:8px 12px;vertical-align:middle}
 
 <script>
 // ── CONFIG ──
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzK--23HL_S_Wf37Xyhl8lUG_FsEEnTrAqrVoU-rxa_0Dz-g-0zj_Oadp7_tb9dNqS34Q/exec';
+// ── URLs CSV (Google Sheets publicados) ──
+const CSV = {
+  candidatos:  'https://docs.google.com/spreadsheets/d/e/2PACX-1vSiyhXfwDZR57BjkP96U7IgTwFdqkS966x5Y6C1OUBD6_7euKG29zBe2yjN8hD2bMlPQ2CbnZYMfjy-/pub?gid=0&single=true&output=csv',
+  entrevistas: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSiyhXfwDZR57BjkP96U7IgTwFdqkS966x5Y6C1OUBD6_7euKG29zBe2yjN8hD2bMlPQ2CbnZYMfjy-/pub?gid=1695675193&single=true&output=csv',
+  finanzas:    'https://docs.google.com/spreadsheets/d/e/2PACX-1vSiyhXfwDZR57BjkP96U7IgTwFdqkS966x5Y6C1OUBD6_7euKG29zBe2yjN8hD2bMlPQ2CbnZYMfjy-/pub?gid=1016492241&single=true&output=csv',
+  impresiones: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSiyhXfwDZR57BjkP96U7IgTwFdqkS966x5Y6C1OUBD6_7euKG29zBe2yjN8hD2bMlPQ2CbnZYMfjy-/pub?gid=1904203587&single=true&output=csv',
+};
 let STORE = { candidatos:[], entrevistas:[], finanzas:[], impresiones:[] };
 
-// ── SYNC ──
-function sync() {
+// ── Parseo CSV robusto ──
+function parseCSV(text) {
+  const lines = text.split('\n');
+  if (lines.length < 2) return [];
+  const rows = [];
+  let current = '', inQuote = false;
+  const cells = [];
+  for (let ci = 0; ci < text.length; ci++) {
+    const ch = text[ci];
+    if (ch === '"') { inQuote = !inQuote; }
+    else if (ch === ',' && !inQuote) { cells.push(current.trim()); current = ''; }
+    else if ((ch === '\n' || ch === '\r') && !inQuote) {
+      cells.push(current.trim()); current = '';
+      rows.push([...cells]); cells.length = 0;
+      if (text[ci+1] === '\n') ci++;
+    } else { current += ch; }
+  }
+  return rows;
+}
+
+function pN(v) { return parseFloat(String(v||0).replace(/[$\.,\s]/g,'').replace(',','.')) || 0; }
+function fF(v) {
+  if (!v || v.trim() === '') return '';
+  const d = new Date(v);
+  if (!isNaN(d)) return d.toISOString().split('T')[0];
+  // Formato DD/MM/YYYY
+  const m = v.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (m) return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;
+  return v;
+}
+
+// ── SYNC: lee los 4 CSVs en paralelo ──
+async function sync() {
   const dot = document.getElementById('sync-dot');
   dot.classList.add('loading');
-  document.getElementById('sync-msg').textContent = 'Actualizando...';
-  const cb = 'cb_' + Date.now();
-  const s = document.createElement('script');
-  s.onerror = () => {
+  document.getElementById('sync-msg').textContent = 'Cargando datos...';
+  try {
+    const [rCand, rEnt, rFin, rImp] = await Promise.all([
+      fetch(CSV.candidatos),
+      fetch(CSV.entrevistas),
+      fetch(CSV.finanzas),
+      fetch(CSV.impresiones),
+    ]);
+    const [tCand, tEnt, tFin, tImp] = await Promise.all([
+      rCand.text(), rEnt.text(), rFin.text(), rImp.text()
+    ]);
+
+    // Parsear candidatos
+    const rowsCand = parseCSV(tCand);
+    STORE.candidatos = rowsCand.slice(1).filter(r => r[4] && r[4].trim()).map(r => ({
+      fPost:   fF(r[1]),
+      fuente:  (r[2]||'').trim(),
+      cohorte: (r[3]||'').trim(),
+      nombre:  (r[4]||'').trim(),
+      estado:  (r[6]||'A contactar').trim(),
+      fCont:   fF(r[7]),
+      fEnt:    fF(r[8]),
+      fBrok:   fF(r[9]),
+      fIng:    fF(r[10]),
+      motivo:  (r[11]||'Sin especificar').trim(),
+      score:   pN(r[14]),
+    }));
+
+    // Parsear entrevistas
+    const rowsEnt = parseCSV(tEnt);
+    STORE.entrevistas = rowsEnt.slice(1).filter(r => r[1] && r[1].trim()).map(r => ({
+      cohorte:    (r[0]||'').trim(),
+      candidato:  (r[1]||'').trim(),
+      localidad:  (r[2]||'').trim(),
+      edad:       pN(r[3])||null,
+      fecha:      fF(r[4]),
+      impulso:    pN(r[5]),
+      aprendizaje:pN(r[6]),
+      prospeccion:pN(r[7]),
+      esfera:     pN(r[8]),
+      disciplina: pN(r[9]),
+      relaciones: pN(r[10]),
+      tecnologia: pN(r[11]),
+      etica:      pN(r[12]),
+      ponderacion:pN(r[14])||null,
+      fortaleza:  (r[15]||'').trim(),
+      debilidad:  (r[16]||'').trim(),
+      total:      pN(r[13]),
+    }));
+
+    // Parsear finanzas
+    const rowsFin = parseCSV(tFin);
+    STORE.finanzas = rowsFin.slice(1).filter(r => r[0] && r[0].trim()).map(r => ({
+      cohorte:  (r[0]||'').trim(),
+      mes:      (r[1]||'').trim(),
+      anio:     pN(r[2])||null,
+      canal:    (r[3]||'').trim(),
+      campania: (r[4]||'').trim(),
+      inversion:pN(r[5]),
+    }));
+
+    // Parsear impresiones (BD_Meta Impresiones)
+    const rowsImp = parseCSV(tImp);
+    STORE.impresiones = rowsImp.slice(1).filter(r => r[0] && r[0].trim()).map(r => ({
+      cohorte:    (r[0]||'').trim(),
+      mes:        (r[1]||'').trim(),
+      canal:      (r[2]||'').trim(),
+      campania:   (r[3]||'').trim(),
+      impresiones:pN(r[4]),
+      alcance:    pN(r[5]),
+      resultados: pN(r[6]),
+      cpr:        pN(r[7]),
+      gastado:    pN(r[8]),
+    }));
+
+    populateFiltros();
+    renderAll();
     dot.classList.remove('loading');
-    document.getElementById('sync-msg').textContent = 'Error de conexión';
-  };
-  window[cb] = (res) => {
-    if (res.ok) {
-      STORE = res.data;
-      populateFiltros();
-      renderAll();
-      dot.classList.remove('loading');
-      dot.style.background = '#4ade80';
-      document.getElementById('sync-msg').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR');
-    }
-    delete window[cb];
-    if (s.parentNode) s.parentNode.removeChild(s);
-  };
-  s.src = SCRIPT_URL + '?accion=todos&callback=' + cb;
-  document.head.appendChild(s);
+    dot.style.background = '#4ade80';
+    document.getElementById('sync-msg').textContent =
+      `${STORE.candidatos.length} candidatos · ${new Date().toLocaleTimeString('es-AR')}`;
+
+  } catch(err) {
+    dot.classList.remove('loading');
+    dot.style.background = '#ef4444';
+    document.getElementById('sync-msg').textContent = 'Error al cargar datos';
+    console.error('Error sync:', err);
+  }
 }
 
 function populateFiltros() {
